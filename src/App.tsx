@@ -3,6 +3,7 @@ import Hero from "./components/sections/Hero";
 import Projects from './components/sections/Projects'
 import About from './components/sections/About'
 import Services from './components/sections/Services'
+import TechStack from './components/sections/TechStack'
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
       <Projects />
       <About />
       <Services />
+      <TechStack />
     </main>
   );
 }
