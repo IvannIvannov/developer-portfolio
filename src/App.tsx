@@ -1,28 +1,20 @@
-import Navbar from "./components/layout/Navbar";
-import Footer from './components/layout/Footer'
+import { Navigate, Route, Routes } from "react-router-dom";
 
-import Hero from "./components/sections/Hero";
-import Projects from './components/sections/Projects'
-import About from './components/sections/About'
-import Services from './components/sections/Services'
-import TechStack from './components/sections/TechStack'
-import AIProjectPlanner from './components/sections/AIProjectPlanner'
-import Contact from './components/sections/Contact'
-
+import Home from "./pages/Home";
+import ProjectDetails from "./pages/ProjectDetails";
+import NotFound from "./pages/NotFound";
 
 function App() {
   return (
-    <main className="min-h-screen bg-neutral-950 text-white">
-      <Navbar />
-      <Hero />
-      <Projects />
-      <About />
-      <Services />
-      <TechStack />
-      <AIProjectPlanner />
-      <Contact />
-      <Footer />
-    </main>
+    <Routes>
+      <Route path="/" element={<Home />} />
+
+      <Route path="/projects/:slug" element={<ProjectDetails />} />
+
+      <Route path="/404" element={<NotFound />} />
+
+      <Route path="*" element={<Navigate to="/404" replace />} />
+    </Routes>
   );
 }
 

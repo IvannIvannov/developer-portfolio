@@ -1,45 +1,11 @@
 import { useRef } from "react";
-import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
-import "./Projects.css";
+import { Link } from "react-router-dom";
 
-const projects = [
-  {
-    number: "01",
-    title: "CodeScope Analyzer",
-    description:
-      "A code quality analysis tool focused on cleaner and more maintainable development.",
-    technologies: ["React", "TypeScript", "Node.js"],
-    image: "/projects/codescope-preview.jpg",
-    link: "#",
-  },
-  {
-    number: "02",
-    title: "E-Learning Platform",
-    description:
-      "A modern learning platform designed around structured content and intuitive navigation.",
-    technologies: ["React", "TypeScript", "REST API"],
-    image: "/projects/elearning-preview.jpg",
-    link: "#",
-  },
-  {
-    number: "03",
-    title: "Creative Portfolio",
-    description:
-      "A responsive portfolio focused on visual storytelling, performance and motion.",
-    technologies: ["React", "TypeScript", "Motion"],
-    image: "/projects/portfolio-preview.jpg",
-    link: "#",
-  },
-  {
-    number: "04",
-    title: "Web Project",
-    description:
-      "A modern digital experience built with a focus on usability and clean development.",
-    technologies: ["React", "TypeScript"],
-    image: "/projects/project-preview.jpg",
-    link: "#",
-  },
-];
+import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
+
+import { projects } from "../../data/projects";
+
+import "./Projects.css";
 
 const Projects = () => {
   const carouselRef = useRef<HTMLDivElement>(null);
@@ -91,35 +57,42 @@ const Projects = () => {
 
         <div className="projects__carousel" ref={carouselRef}>
           {projects.map((project) => (
-            <article key={project.title} className="project-card">
+            <article key={project.slug} className="project-card">
               <div className="project-card__preview">
-                <img
-                  src={project.image}
-                  alt={`${project.title} project preview`}
-                />
+                {project.image ? (
+                  <img
+                    src={project.image}
+                    alt={`${project.title} project preview`}
+                  />
+                ) : (
+                  <div className="project-card__placeholder">
+                    <span>{project.number}</span>
+                    <p>{project.title}</p>
+                  </div>
+                )}
               </div>
 
               <div className="project-card__body">
                 <div className="project-card__meta">
                   <span>{project.number}</span>
 
-                  <a
-                    href={project.link}
+                  <Link
+                    to={`/projects/${project.slug}`}
                     aria-label={`View ${project.title}`}
                     className="project-card__link"
                   >
                     <ArrowUpRight size={18} />
-                  </a>
+                  </Link>
                 </div>
 
                 <h3 className="project-card__title">{project.title}</h3>
 
                 <p className="project-card__description">
-                  {project.description}
+                  {project.shortDescription}
                 </p>
 
                 <div className="project-card__technologies">
-                  {project.technologies.map((technology) => (
+                  {project.technologies.slice(0, 3).map((technology) => (
                     <span key={technology}>{technology}</span>
                   ))}
                 </div>
