@@ -1,9 +1,38 @@
+import { useEffect, useState } from "react";
 import { Menu } from "lucide-react";
 import "./Navbar.css";
 
 const Navbar = () => {
+  const [isVisible, setIsVisible] = useState(true);
+
+  useEffect(() => {
+    let lastScrollY = window.scrollY;
+
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      if (currentScrollY < 80) {
+        setIsVisible(true);
+      } else if (currentScrollY > lastScrollY) {
+        setIsVisible(false);
+      } else {
+        setIsVisible(true);
+      }
+
+      lastScrollY = currentScrollY;
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   return (
-    <header className="navbar">
+    <header
+      className={`navbar ${isVisible ? "navbar--visible" : "navbar--hidden"}`}
+    >
       <div className="navbar__container">
         <a href="#home" className="navbar__logo">
           Ivan Ivanov
