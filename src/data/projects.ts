@@ -1,4 +1,4 @@
-import type { Project } from '../types/project'
+import type { Project } from "../types/project";
 
 export const projects: Project[] = [
   {
@@ -35,6 +35,9 @@ export const projects: Project[] = [
 
     challenges:
       "One of the main challenges was designing the analysis rules so they remained useful without producing unnecessary noise. The project required careful handling of different code structures while keeping the output understandable.",
+
+    image:
+      "https://res.cloudinary.com/dznyfk4z6/image/upload/f_auto,q_auto,w_1600/codescope_gfdlez.png",
   },
 
   {
@@ -74,36 +77,39 @@ export const projects: Project[] = [
 
   {
     number: "03",
-    slug: "creative-portfolio",
-    title: "Creative Portfolio",
+    slug: "anastasia-portfolio",
+    title: "Anastasia Portfolio",
     category: "Portfolio Website",
     year: "2026",
     role: "Frontend Development",
 
     shortDescription:
-      "A responsive portfolio experience focused on visual storytelling, motion and modern presentation.",
+      "A modern personal portfolio focused on visual presentation, motion and a clean responsive experience.",
 
     description:
-      "A modern portfolio website developed to showcase creative work through strong visual hierarchy, responsive layouts and subtle motion.",
+      "A modern portfolio website developed to present personal work, creative projects and professional experience through a clean visual system and responsive layout.",
 
     technologies: ["React", "TypeScript", "Motion", "Vite", "Vercel"],
 
     problem:
-      "Creative portfolios often need to display a large amount of visual content without overwhelming the visitor or making the experience feel like a simple gallery.",
+      "The goal was to present a large amount of creative work in a way that feels modern and visually engaging without making the website difficult to navigate.",
 
     solution:
-      "The website combines carefully structured sections, responsive layouts and subtle animation to create a portfolio that feels both visually engaging and easy to explore.",
+      "The website uses a structured layout, strong visual hierarchy and subtle animations to create a clear and engaging portfolio experience across different devices.",
 
     features: [
       "Responsive portfolio layout",
       "Animated interface elements",
       "Project presentation sections",
-      "Video and visual content integration",
+      "Video content integration",
       "Contact functionality",
-      "Vercel deployment",
+      "Modern responsive design",
     ],
 
     challenges:
-      "The key challenge was maintaining strong visual impact while keeping performance, responsiveness and usability consistent across different screen sizes.",
+      "The main challenge was balancing visual impact with performance and usability while keeping the experience consistent across desktop and mobile devices.",
+
+    image:
+      "https://res.cloudinary.com/dznyfk4z6/image/upload/f_auto,q_auto,w_1600/Bebe_qxmeb2.png",
   },
 ];
