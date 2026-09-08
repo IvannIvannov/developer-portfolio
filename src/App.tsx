@@ -5,6 +5,7 @@ import About from './components/sections/About'
 import Services from './components/sections/Services'
 import TechStack from './components/sections/TechStack'
 import AIProjectPlanner from './components/sections/AIProjectPlanner'
+import Contact from './components/sections/Contact'
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
       <Services />
       <TechStack />
       <AIProjectPlanner />
+      <Contact />
     </main>
   );
 }
