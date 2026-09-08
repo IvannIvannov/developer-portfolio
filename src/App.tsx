@@ -4,6 +4,7 @@ import Projects from './components/sections/Projects'
 import About from './components/sections/About'
 import Services from './components/sections/Services'
 import TechStack from './components/sections/TechStack'
+import AIProjectPlanner from './components/sections/AIProjectPlanner'
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
       <About />
       <Services />
       <TechStack />
+      <AIProjectPlanner />
     </main>
   );
 }
