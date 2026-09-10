@@ -40,6 +40,8 @@ const budgets = [
   "€2,500+",
 ];
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 const Contact = () => {
   const [step, setStep] = useState(1);
 
@@ -99,7 +101,7 @@ const Contact = () => {
     setIsSuccess(false);
 
     try {
-      const response = await fetch("http://localhost:5000/api/contact", {
+      const response = await fetch(`${API_URL}/api/contact`, {
         method: "POST",
 
         headers: {
