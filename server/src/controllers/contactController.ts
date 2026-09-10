@@ -12,6 +12,8 @@ type ContactRequestBody = {
   turnstileToken?: string;
 };
 
+const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 export const submitContactForm = async (
   req: Request<
     Record<string, never>,
@@ -36,6 +38,48 @@ export const submitContactForm = async (
     });
   }
 
+  if (name.trim().length > 100) {
+    return res.status(400).json({
+      success: false,
+      message: "Name is too long.",
+    });
+  }
+
+  if (email.trim().length > 200) {
+    return res.status(400).json({
+      success: false,
+      message: "Email address is too long.",
+    });
+  }
+
+  if (projectType.trim().length > 100) {
+    return res.status(400).json({
+      success: false,
+      message: "Project type is invalid.",
+    });
+  }
+
+  if (budget.trim().length > 100) {
+    return res.status(400).json({
+      success: false,
+      message: "Budget value is invalid.",
+    });
+  }
+
+  if (message.trim().length > 2000) {
+    return res.status(400).json({
+      success: false,
+      message: "Project message is too long.",
+    });
+  }
+
+  if (!emailPattern.test(email.trim())) {
+    return res.status(400).json({
+      success: false,
+      message: "Please enter a valid email address.",
+    });
+  }
+
   if (!turnstileToken) {
     return res.status(400).json({
       success: false,
@@ -43,24 +87,10 @@ export const submitContactForm = async (
     });
   }
 
-  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-  if (!emailPattern.test(email)) {
-    return res.status(400).json({
-      success: false,
-      message: "Please enter a valid email address.",
-    });
-  }
-
   try {
     const verification = await verifyTurnstileToken(turnstileToken);
 
     if (!verification.success) {
-      console.warn(
-        "Turnstile verification failed:",
-        verification["error-codes"],
-      );
-
       return res.status(403).json({
         success: false,
         message: "Security verification failed. Please try again.",
