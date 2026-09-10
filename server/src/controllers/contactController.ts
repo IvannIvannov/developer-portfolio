@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 
 import { sendContactEmail } from "../services/emailService.js";
+import { verifyTurnstileToken } from "../services/turnstileService.js";
 
 type ContactRequestBody = {
   name?: string;
@@ -8,6 +9,7 @@ type ContactRequestBody = {
   projectType?: string;
   budget?: string;
   message?: string;
+  turnstileToken?: string;
 };
 
 export const submitContactForm = async (
@@ -18,7 +20,8 @@ export const submitContactForm = async (
   >,
   res: Response,
 ) => {
-  const { name, email, projectType, budget, message } = req.body;
+  const { name, email, projectType, budget, message, turnstileToken } =
+    req.body;
 
   if (
     !name?.trim() ||
@@ -33,6 +36,13 @@ export const submitContactForm = async (
     });
   }
 
+  if (!turnstileToken) {
+    return res.status(400).json({
+      success: false,
+      message: "Please complete the security check.",
+    });
+  }
+
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   if (!emailPattern.test(email)) {
@@ -43,6 +53,20 @@ export const submitContactForm = async (
   }
 
   try {
+    const verification = await verifyTurnstileToken(turnstileToken);
+
+    if (!verification.success) {
+      console.warn(
+        "Turnstile verification failed:",
+        verification["error-codes"],
+      );
+
+      return res.status(403).json({
+        success: false,
+        message: "Security verification failed. Please try again.",
+      });
+    }
+
     await sendContactEmail({
       name: name.trim(),
       email: email.trim(),
@@ -56,7 +80,7 @@ export const submitContactForm = async (
       message: "Your project enquiry has been sent successfully.",
     });
   } catch (error) {
-    console.error("Contact email error:", error);
+    console.error("Contact request error:", error);
 
     return res.status(500).json({
       success: false,

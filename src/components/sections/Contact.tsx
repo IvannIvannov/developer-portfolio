@@ -1,6 +1,8 @@
 import { useState } from "react";
 import type { SyntheticEvent } from "react";
 
+import { Turnstile } from "@marsidev/react-turnstile";
+
 import { ArrowLeft, ArrowRight, ArrowUpRight, Check, Mail } from "lucide-react";
 
 import "./Contact.css";
@@ -42,6 +44,8 @@ const Contact = () => {
   const [step, setStep] = useState(1);
 
   const [formData, setFormData] = useState<ContactFormData>(initialFormData);
+
+  const [turnstileToken, setTurnstileToken] = useState("");
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -85,6 +89,11 @@ const Contact = () => {
       return;
     }
 
+    if (!turnstileToken) {
+      setError("Please complete the security check.");
+      return;
+    }
+
     setIsSubmitting(true);
     setError("");
     setIsSuccess(false);
@@ -97,7 +106,10 @@ const Contact = () => {
           "Content-Type": "application/json",
         },
 
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          turnstileToken,
+        }),
       });
 
       const data = await response.json();
@@ -110,6 +122,7 @@ const Contact = () => {
 
       setIsSuccess(true);
       setFormData(initialFormData);
+      setTurnstileToken("");
       setStep(1);
     } catch (requestError) {
       if (requestError instanceof Error) {
@@ -349,6 +362,26 @@ const Contact = () => {
                   </div>
                 </div>
 
+                <div className="contact__turnstile">
+                  <Turnstile
+                    siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
+                    onSuccess={(token) => {
+                      setTurnstileToken(token);
+                      setError("");
+                    }}
+                    onExpire={() => {
+                      setTurnstileToken("");
+                    }}
+                    onError={() => {
+                      setTurnstileToken("");
+                      setError("Security check failed. Please try again.");
+                    }}
+                    options={{
+                      theme: "dark",
+                    }}
+                  />
+                </div>
+
                 {error && <p className="contact__error">{error}</p>}
 
                 <div className="contact__actions">
@@ -365,7 +398,11 @@ const Contact = () => {
                   <button
                     type="submit"
                     className="contact__next"
-                    disabled={isSubmitting || !formData.message.trim()}
+                    disabled={
+                      isSubmitting ||
+                      !formData.message.trim() ||
+                      !turnstileToken
+                    }
                   >
                     {isSubmitting ? "Sending..." : "Send enquiry"}
 

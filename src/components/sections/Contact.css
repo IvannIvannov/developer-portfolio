@@ -618,6 +618,18 @@
     }
 }
 
+.contact__turnstile {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 32px;
+}
+
+@media (max-width: 520px) {
+    .contact__turnstile {
+        justify-content: flex-start;
+    }
+}
+
 /* TABLET */
 
 @media (max-width: 950px) {
