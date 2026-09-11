@@ -38,6 +38,8 @@ export const projects: Project[] = [
 
     image:
       "https://res.cloudinary.com/dznyfk4z6/image/upload/f_auto,q_auto,w_1600/codescope_gfdlez.png",
+
+    liveUrl: "https://codescope-n5t7.onrender.com/",
   },
 
   {
@@ -111,5 +113,7 @@ export const projects: Project[] = [
 
     image:
       "https://res.cloudinary.com/dznyfk4z6/image/upload/f_auto,q_auto,w_1600/Bebe_qxmeb2.png",
+
+    liveUrl: "https://anastasia-portfolio.vercel.app/",
   },
 ];
