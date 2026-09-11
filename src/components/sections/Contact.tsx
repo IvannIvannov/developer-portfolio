@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
 import type { SyntheticEvent } from "react";
 
 import { Turnstile } from "@marsidev/react-turnstile";
@@ -13,6 +14,18 @@ type ContactFormData = {
   projectType: string;
   budget: string;
   message: string;
+};
+
+type ProjectPlan = {
+  type: string;
+  complexity: string;
+  timeline: string;
+  features: string[];
+};
+
+type AIProjectSelection = {
+  selectedProjectType: string;
+  plan: ProjectPlan;
 };
 
 const initialFormData: ContactFormData = {
@@ -55,6 +68,57 @@ const Contact = () => {
 
   const [error, setError] = useState("");
 
+  useEffect(() => {
+    const handleAIProjectSelection = (event: Event) => {
+      const customEvent = event as CustomEvent<AIProjectSelection>;
+
+      const { selectedProjectType, plan } = customEvent.detail;
+
+      const validProjectType = projectTypes.includes(selectedProjectType)
+        ? selectedProjectType
+        : "Something else";
+
+      const finalProjectType =
+        validProjectType === "Not sure yet"
+          ? "Something else"
+          : validProjectType;
+
+      const aiMessage = [
+        "AI Project Planner summary",
+        "",
+        `Recommended project: ${plan.type}`,
+        `Complexity: ${plan.complexity}`,
+        `Estimated timeline: ${plan.timeline}`,
+        "",
+        "Recommended features:",
+        ...plan.features.map((feature) => `- ${feature}`),
+      ].join("\n");
+
+      setFormData((current) => ({
+        ...current,
+
+        projectType: finalProjectType,
+
+        message: aiMessage,
+      }));
+
+      setStep(1);
+
+      setError("");
+      setIsSuccess(false);
+      setTurnstileToken("");
+    };
+
+    window.addEventListener("ai-project-selected", handleAIProjectSelection);
+
+    return () => {
+      window.removeEventListener(
+        "ai-project-selected",
+        handleAIProjectSelection,
+      );
+    };
+  }, []);
+
   const updateField = (field: keyof ContactFormData, value: string) => {
     setFormData((current) => ({
       ...current,
@@ -88,11 +152,13 @@ const Contact = () => {
 
     if (!formData.message.trim()) {
       setError("Please tell me a little about your project.");
+
       return;
     }
 
     if (!turnstileToken) {
       setError("Please complete the security check.");
+
       return;
     }
 
@@ -123,8 +189,11 @@ const Contact = () => {
       }
 
       setIsSuccess(true);
+
       setFormData(initialFormData);
+
       setTurnstileToken("");
+
       setStep(1);
     } catch (requestError) {
       if (requestError instanceof Error) {
@@ -369,6 +438,7 @@ const Contact = () => {
                     siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
                     onSuccess={(token) => {
                       setTurnstileToken(token);
+
                       setError("");
                     }}
                     onExpire={() => {
@@ -376,6 +446,7 @@ const Contact = () => {
                     }}
                     onError={() => {
                       setTurnstileToken("");
+
                       setError("Security check failed. Please try again.");
                     }}
                     options={{

@@ -18,6 +18,11 @@ type ProjectPlanResponse = {
   message?: string;
 };
 
+type AIProjectSelection = {
+  selectedProjectType: string;
+  plan: ProjectPlan;
+};
+
 const projectTypes = [
   "Not sure yet",
   "Business Website",
@@ -86,6 +91,28 @@ const AIProjectPlanner = () => {
     } finally {
       setIsGenerating(false);
     }
+  };
+
+  const handleContinueWithProject = () => {
+    if (!plan) {
+      return;
+    }
+
+    const projectSelection: AIProjectSelection = {
+      selectedProjectType: projectType,
+      plan,
+    };
+
+    window.dispatchEvent(
+      new CustomEvent("ai-project-selected", {
+        detail: projectSelection,
+      }),
+    );
+
+    document.getElementById("contact")?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
   };
 
   return (
@@ -269,10 +296,14 @@ const AIProjectPlanner = () => {
                   </div>
                 </div>
 
-                <a href="#contact" className="ai-planner__continue">
+                <button
+                  type="button"
+                  className="ai-planner__continue"
+                  onClick={handleContinueWithProject}
+                >
                   Continue with this project
                   <ArrowUpRight size={16} />
-                </a>
+                </button>
               </div>
             )}
           </div>
