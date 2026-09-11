@@ -1,4 +1,5 @@
 import { useRef } from "react";
+
 import { Link } from "react-router-dom";
 
 import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
@@ -11,14 +12,22 @@ const Projects = () => {
   const carouselRef = useRef<HTMLDivElement>(null);
 
   const scrollCarousel = (direction: "left" | "right") => {
-    if (!carouselRef.current) return;
+    if (!carouselRef.current) {
+      return;
+    }
 
-    const cardWidth =
-      carouselRef.current.querySelector<HTMLElement>(".project-card")
-        ?.offsetWidth ?? 350;
+    const card =
+      carouselRef.current.querySelector<HTMLElement>(".project-card");
+
+    const cardWidth = card?.offsetWidth ?? 350;
+
+    const styles = window.getComputedStyle(carouselRef.current);
+
+    const gap = Number.parseFloat(styles.columnGap || styles.gap || "24") || 24;
 
     carouselRef.current.scrollBy({
-      left: direction === "left" ? -(cardWidth + 24) : cardWidth + 24,
+      left: direction === "left" ? -(cardWidth + gap) : cardWidth + gap,
+
       behavior: "smooth",
     });
   };
@@ -67,6 +76,7 @@ const Projects = () => {
                 ) : (
                   <div className="project-card__placeholder">
                     <span>{project.number}</span>
+
                     <p>{project.title}</p>
                   </div>
                 )}
@@ -100,6 +110,8 @@ const Projects = () => {
             </article>
           ))}
         </div>
+
+        <p className="projects__swipe">Swipe to explore projects</p>
       </div>
     </section>
   );
