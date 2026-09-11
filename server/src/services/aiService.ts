@@ -1,5 +1,3 @@
-import OpenAI from "openai";
-
 type GenerateProjectPlanInput = {
   description: string;
   projectType: string;
@@ -12,88 +10,137 @@ export type ProjectPlan = {
   features: string[];
 };
 
+type CloudflareAIResponse = {
+  success: boolean;
+  result?: {
+    response?: string;
+  };
+  errors?: Array<{
+    code?: number;
+    message?: string;
+  }>;
+};
+
+const MODEL = "@cf/zai-org/glm-4.7-flash";
+
 export const generateProjectPlan = async ({
   description,
   projectType,
 }: GenerateProjectPlanInput): Promise<ProjectPlan> => {
-  const apiKey = process.env.OPENAI_API_KEY;
+  const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
 
-  if (!apiKey) {
-    throw new Error("OPENAI_API_KEY is not configured.");
+  const apiToken = process.env.CLOUDFLARE_AI_TOKEN;
+
+  if (!accountId) {
+    throw new Error("CLOUDFLARE_ACCOUNT_ID is not configured.");
   }
 
-  const openai = new OpenAI({
-    apiKey,
-  });
+  if (!apiToken) {
+    throw new Error("CLOUDFLARE_AI_TOKEN is not configured.");
+  }
 
-  const response = await openai.responses.create({
-    model: "gpt-5.6-luna",
+  const response = await fetch(
+    `https://api.cloudflare.com/client/v4/accounts/${accountId}/ai/run/${MODEL}`,
+    {
+      method: "POST",
 
-    input: [
-      {
-        role: "system",
-        content:
-          "You are a senior web product consultant. Analyse the user project idea and return a concise, realistic project plan for a freelance web development project. Do not oversell and keep recommendations practical.",
+      headers: {
+        Authorization: `Bearer ${apiToken}`,
+
+        "Content-Type": "application/json",
       },
-      {
-        role: "user",
-        content: `
+
+      body: JSON.stringify({
+        messages: [
+          {
+            role: "system",
+
+            content: `
+You are a senior web product consultant.
+
+Analyse the user's project idea and create a concise,
+realistic plan for a freelance web development project.
+
+Return ONLY valid JSON.
+
+The response must have exactly this structure:
+
+{
+  "type": "string",
+  "complexity": "Low | Medium | High",
+  "timeline": "string",
+  "features": [
+    "string"
+  ]
+}
+
+Rules:
+- Return between 3 and 6 features.
+- Do not include markdown.
+- Do not include explanations outside the JSON.
+- Keep recommendations realistic.
+- Do not oversell.
+- Keep the timeline concise.
+            `.trim(),
+          },
+
+          {
+            role: "user",
+
+            content: `
 Project type: ${projectType}
 
 Project description:
 ${description}
-        `.trim(),
-      },
-    ],
-
-    text: {
-      format: {
-        type: "json_schema",
-        name: "project_plan",
-        strict: true,
-
-        schema: {
-          type: "object",
-
-          properties: {
-            type: {
-              type: "string",
-            },
-
-            complexity: {
-              type: "string",
-              enum: ["Low", "Medium", "High"],
-            },
-
-            timeline: {
-              type: "string",
-            },
-
-            features: {
-              type: "array",
-
-              items: {
-                type: "string",
-              },
-
-              minItems: 3,
-              maxItems: 6,
-            },
+            `.trim(),
           },
+        ],
 
-          required: ["type", "complexity", "timeline", "features"],
-
-          additionalProperties: false,
-        },
-      },
+        max_tokens: 500,
+        temperature: 0.3,
+      }),
     },
-  });
+  );
 
-  const output = response.output_text;
+  const data = (await response.json()) as CloudflareAIResponse;
 
-  if (!output) {
-    throw new Error("OpenAI returned an empty response.");
+  if (!response.ok || !data.success) {
+    console.error("Cloudflare AI error:", data.errors);
+
+    throw new Error(
+      data.errors?.[0]?.message || "Cloudflare AI request failed.",
+    );
   }
 
-  return JSON.parse(output) as ProjectPlan;
+  const output = data.result?.response;
+
+  if (!output) {
+    throw new Error("Cloudflare AI returned an empty response.");
+  }
+
+  let parsed: ProjectPlan;
+
+  try {
+    parsed = JSON.parse(output) as ProjectPlan;
+  } catch {
+    console.error("Invalid Cloudflare AI response:", output);
+
+    throw new Error("Cloudflare AI returned invalid JSON.");
+  }
+
+  if (
+    !parsed.type ||
+    !parsed.complexity ||
+    !parsed.timeline ||
+    !Array.isArray(parsed.features)
+  ) {
+    throw new Error("Cloudflare AI returned an invalid project plan.");
+  }
+
+  return {
+    type: parsed.type,
+    complexity: parsed.complexity,
+    timeline: parsed.timeline,
+    features: parsed.features.slice(0, 6),
+  };
 };

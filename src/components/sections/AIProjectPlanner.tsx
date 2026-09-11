@@ -12,181 +12,210 @@ type ProjectPlan = {
   features: string[];
 };
 
+type ProjectPlanResponse = {
+  success: boolean;
+  plan?: ProjectPlan;
+  message?: string;
+};
+
+const projectTypes = [
+  "Not sure yet",
+  "Business Website",
+  "Landing Page",
+  "Portfolio Website",
+  "Web Application",
+  "AI-powered Product",
+];
+
+const API_URL = import.meta.env.VITE_API_URL;
+
 const AIProjectPlanner = () => {
   const [description, setDescription] = useState("");
+
   const [projectType, setProjectType] = useState("Not sure yet");
+
   const [isGenerating, setIsGenerating] = useState(false);
+
   const [plan, setPlan] = useState<ProjectPlan | null>(null);
 
-  const handleSubmit = (event: SyntheticEvent<HTMLFormElement>) => {
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (event: SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (!description.trim()) return;
+    const cleanDescription = description.trim();
+
+    if (!cleanDescription) {
+      return;
+    }
 
     setIsGenerating(true);
     setPlan(null);
+    setError("");
 
-    // Temporary frontend demo.
-    // Later this will call our backend AI endpoint.
-    setTimeout(() => {
-      setPlan({
-        type:
-          projectType === "Not sure yet"
-            ? "Custom Business Website"
-            : projectType,
-        complexity: "Medium",
-        timeline: "3–5 weeks",
-        features: [
-          "Responsive interface",
-          "Custom page structure",
-          "Contact functionality",
-          "SEO foundation",
-          "Performance optimization",
-        ],
+    try {
+      const response = await fetch(`${API_URL}/api/ai/project-plan`, {
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json",
+        },
+
+        body: JSON.stringify({
+          description: cleanDescription,
+
+          projectType,
+        }),
       });
 
+      const data = (await response.json()) as ProjectPlanResponse;
+
+      if (!response.ok || !data.success || !data.plan) {
+        throw new Error(
+          data.message || "Unable to generate your project plan.",
+        );
+      }
+
+      setPlan(data.plan);
+    } catch (requestError) {
+      if (requestError instanceof Error) {
+        setError(requestError.message);
+      } else {
+        setError("Unable to generate your project plan. Please try again.");
+      }
+    } finally {
       setIsGenerating(false);
-    }, 1100);
+    }
   };
 
   return (
-    <section id="ai-planner" className="ai-planner">
+    <section id="ai-project-planner" className="ai-planner">
       <div className="ai-planner__container">
         <div className="ai-planner__header">
           <div>
             <p className="ai-planner__eyebrow">AI Project Planner</p>
 
             <h2 className="ai-planner__title">
-              Have an idea?
-              <span> Let AI help shape it.</span>
+              Turn your idea into
+              <span> a clear starting point.</span>
             </h2>
           </div>
 
           <p className="ai-planner__intro">
-            Describe what you want to build and receive an initial project
-            outline with recommended functionality, scope and complexity.
+            Describe what you want to build and get an instant AI-generated
+            project outline with estimated complexity, timeline and key
+            features.
           </p>
         </div>
 
         <div className="ai-planner__workspace">
-          <form className="ai-planner__form" onSubmit={handleSubmit}>
-            <div className="ai-planner__form-top">
-              <div className="ai-planner__ai-badge">
-                <Sparkles size={15} />
-                AI powered
+          <div className="ai-planner__input-panel">
+            <div className="ai-planner__panel-top">
+              <div>
+                <WandSparkles size={17} />
+
+                <span>Describe your project</span>
               </div>
 
-              <span>01 / Project brief</span>
+              <span className="ai-planner__powered">AI powered</span>
             </div>
 
-            <div className="ai-planner__field">
-              <label htmlFor="project-description">
-                Tell me about your idea
-              </label>
+            <form onSubmit={handleSubmit}>
+              <div className="ai-planner__field">
+                <label htmlFor="project-description">Project idea</label>
 
-              <textarea
-                id="project-description"
-                value={description}
-                onChange={(event) => setDescription(event.target.value)}
-                placeholder="Example: I need a modern website for a beauty studio with services, pricing, a gallery and an online booking option..."
-                rows={7}
-                maxLength={1000}
-              />
+                <textarea
+                  id="project-description"
+                  value={description}
+                  onChange={(event) => {
+                    setDescription(event.target.value);
 
-              <div className="ai-planner__field-footer">
-                <span>
-                  The more detail you provide, the better the project outline.
+                    setError("");
+                  }}
+                  maxLength={1000}
+                  placeholder="For example: I need a modern website for a boutique hotel where visitors can explore rooms, view a gallery and send booking enquiries..."
+                />
+
+                <span className="ai-planner__count">
+                  {description.length} / 1000
                 </span>
-
-                <span>{description.length} / 1000</span>
               </div>
-            </div>
 
-            <div className="ai-planner__field">
-              <label htmlFor="project-type">Project type</label>
+              <div className="ai-planner__type">
+                <span className="ai-planner__field-label">Project type</span>
 
-              <div className="ai-planner__select-wrapper">
-                <select
-                  id="project-type"
-                  value={projectType}
-                  onChange={(event) => setProjectType(event.target.value)}
-                >
-                  <option>Not sure yet</option>
-                  <option>Business Website</option>
-                  <option>Landing Page</option>
-                  <option>Portfolio Website</option>
-                  <option>Web Application</option>
-                  <option>AI-powered Product</option>
-                </select>
+                <div className="ai-planner__type-options">
+                  {projectTypes.map((type) => (
+                    <button
+                      key={type}
+                      type="button"
+                      className={
+                        projectType === type
+                          ? "ai-planner__type-option ai-planner__type-option--active"
+                          : "ai-planner__type-option"
+                      }
+                      onClick={() => {
+                        setProjectType(type);
+                        setError("");
+                      }}
+                    >
+                      {type}
+
+                      {projectType === type && <Check size={13} />}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
 
-            <button
-              type="submit"
-              className="ai-planner__generate"
-              disabled={!description.trim() || isGenerating}
-            >
-              {isGenerating ? (
-                <>
-                  <span className="ai-planner__loader" />
-                  Analysing project...
-                </>
-              ) : (
-                <>
-                  <WandSparkles size={18} />
-                  Generate project plan
-                  <ArrowUpRight size={17} />
-                </>
-              )}
-            </button>
+              {error && <p className="ai-planner__error">{error}</p>}
 
-            <p className="ai-planner__disclaimer">
-              This provides an initial AI-generated project outline. Final scope
-              and requirements are confirmed personally before development
-              begins.
-            </p>
-          </form>
+              <button
+                type="submit"
+                className="ai-planner__generate"
+                disabled={isGenerating || !description.trim()}
+              >
+                {isGenerating ? (
+                  <>
+                    <span className="ai-planner__loader" />
+                    Analysing your idea...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles size={16} />
+                    Generate project plan
+                  </>
+                )}
+              </button>
+            </form>
+          </div>
 
-          <div
-            className={`ai-planner__result ${
-              plan ? "ai-planner__result--active" : ""
-            }`}
-          >
+          <div className="ai-planner__result-panel">
             {!plan && !isGenerating && (
               <div className="ai-planner__empty">
                 <div className="ai-planner__empty-icon">
-                  <Sparkles size={30} strokeWidth={1.4} />
+                  <Sparkles size={22} />
                 </div>
 
-                <span className="ai-planner__empty-label">
-                  Project analysis
-                </span>
-
-                <h3>Your project plan will appear here.</h3>
+                <span>Your project plan will appear here</span>
 
                 <p>
-                  Describe your idea and the planner will turn it into a
-                  structured starting point.
+                  Add a short description of your idea and let AI turn it into a
+                  practical starting point.
                 </p>
-
-                <div className="ai-planner__empty-lines">
-                  <span />
-                  <span />
-                  <span />
-                </div>
               </div>
             )}
 
             {isGenerating && (
-              <div className="ai-planner__thinking">
-                <div className="ai-planner__thinking-icon">
-                  <Sparkles size={28} />
+              <div className="ai-planner__loading">
+                <div className="ai-planner__loading-icon">
+                  <Sparkles size={22} />
                 </div>
 
-                <span>AI is analysing your idea</span>
+                <span>Analysing your project</span>
 
-                <div className="ai-planner__thinking-lines">
-                  <span />
+                <p>Evaluating scope, complexity and recommended features.</p>
+
+                <div className="ai-planner__loading-lines">
                   <span />
                   <span />
                   <span />
@@ -195,23 +224,24 @@ const AIProjectPlanner = () => {
             )}
 
             {plan && !isGenerating && (
-              <div className="ai-planner__plan">
-                <div className="ai-planner__plan-top">
+              <div className="ai-planner__result">
+                <div className="ai-planner__result-top">
                   <div>
-                    <span className="ai-planner__plan-label">
-                      Suggested project
-                    </span>
+                    <Sparkles size={16} />
 
-                    <h3>{plan.type}</h3>
+                    <span>Project analysis</span>
                   </div>
 
-                  <span className="ai-planner__generated">
-                    <span />
-                    Generated
-                  </span>
+                  <span className="ai-planner__status">Generated</span>
                 </div>
 
-                <div className="ai-planner__metrics">
+                <div className="ai-planner__result-title">
+                  <span>Recommended project</span>
+
+                  <h3>{plan.type}</h3>
+                </div>
+
+                <div className="ai-planner__result-meta">
                   <div>
                     <span>Complexity</span>
 
@@ -226,26 +256,22 @@ const AIProjectPlanner = () => {
                 </div>
 
                 <div className="ai-planner__features">
-                  <span className="ai-planner__features-label">
-                    Recommended features
-                  </span>
+                  <span>Recommended features</span>
 
-                  <div className="ai-planner__feature-list">
+                  <div>
                     {plan.features.map((feature) => (
-                      <div className="ai-planner__feature" key={feature}>
-                        <span>
-                          <Check size={13} />
-                        </span>
+                      <p key={feature}>
+                        <Check size={14} />
 
                         {feature}
-                      </div>
+                      </p>
                     ))}
                   </div>
                 </div>
 
-                <a href="#contact" className="ai-planner__contact">
+                <a href="#contact" className="ai-planner__continue">
                   Continue with this project
-                  <ArrowUpRight size={17} />
+                  <ArrowUpRight size={16} />
                 </a>
               </div>
             )}
