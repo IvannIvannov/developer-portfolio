@@ -1,4 +1,5 @@
 import { ArrowDown, ArrowUpRight } from "lucide-react";
+
 import "./Hero.css";
 
 const Hero = () => {
