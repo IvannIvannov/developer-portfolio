@@ -18,7 +18,7 @@ const technologiesRowTwo = [
   "REST APIs",
   "PostgreSQL",
   "Supabase",
-  "OpenAI API",
+  "Cloudflare Workers AI",
   "Git",
   "GitHub",
   "Vercel",
@@ -174,7 +174,9 @@ const TechStack = () => {
 
                     <div className="frontend-preview__hero">
                       <div className="preview-line preview-line--small" />
+
                       <div className="preview-line preview-line--large" />
+
                       <div className="preview-line preview-line--large preview-line--grey" />
 
                       <div className="frontend-preview__buttons">
@@ -243,6 +245,7 @@ const TechStack = () => {
           {highlights.map((item) => (
             <div className="tech-stack__highlight" key={item.label}>
               {item.icon}
+
               <span>{item.label}</span>
             </div>
           ))}
