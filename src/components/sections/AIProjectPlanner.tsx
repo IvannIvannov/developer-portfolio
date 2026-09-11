@@ -1,4 +1,5 @@
 import { useState } from "react";
+
 import type { SyntheticEvent } from "react";
 
 import { ArrowUpRight, Check, Sparkles, WandSparkles } from "lucide-react";
@@ -101,7 +102,9 @@ const AIProjectPlanner = () => {
 
     const projectSelection: AIProjectSelection = {
       selectedProjectType: projectType,
+
       originalDescription: description.trim(),
+
       plan,
     };
 
@@ -185,6 +188,7 @@ const AIProjectPlanner = () => {
                       }
                       onClick={() => {
                         setProjectType(type);
+
                         setError("");
                       }}
                     >
