@@ -5,23 +5,62 @@ type GenerateProjectPlanInput = {
 
 export type ProjectPlan = {
   type: string;
-  complexity: string;
+  complexity: "Low" | "Medium" | "High";
   timeline: string;
   features: string[];
 };
 
 type CloudflareAIResponse = {
-  success: boolean;
-  result?: {
-    response?: string;
-  };
-  errors?: Array<{
-    code?: number;
-    message?: string;
+  choices?: Array<{
+    message?: {
+      role?: string;
+      content?: string | null;
+    };
+    finish_reason?: string | null;
   }>;
+  error?: {
+    message?: string;
+  };
 };
 
 const MODEL = "@cf/zai-org/glm-4.7-flash";
+
+const parseProjectPlan = (content: string): ProjectPlan => {
+  const cleanedContent = content
+    .replace(/```json/gi, "")
+    .replace(/```/g, "")
+    .trim();
+
+  const parsed = JSON.parse(cleanedContent) as Partial<ProjectPlan>;
+
+  if (
+    typeof parsed.type !== "string" ||
+    typeof parsed.complexity !== "string" ||
+    typeof parsed.timeline !== "string" ||
+    !Array.isArray(parsed.features)
+  ) {
+    throw new Error("Cloudflare AI returned an invalid project plan.");
+  }
+
+  if (!["Low", "Medium", "High"].includes(parsed.complexity)) {
+    throw new Error("Cloudflare AI returned an invalid complexity value.");
+  }
+
+  const features = parsed.features
+    .filter((feature): feature is string => typeof feature === "string")
+    .slice(0, 6);
+
+  if (features.length < 3) {
+    throw new Error("Cloudflare AI returned too few features.");
+  }
+
+  return {
+    type: parsed.type,
+    complexity: parsed.complexity as ProjectPlan["complexity"],
+    timeline: parsed.timeline,
+    features,
+  };
+};
 
 export const generateProjectPlan = async ({
   description,
@@ -40,7 +79,7 @@ export const generateProjectPlan = async ({
   }
 
   const response = await fetch(
-    `https://api.cloudflare.com/client/v4/accounts/${accountId}/ai/run/${MODEL}`,
+    `https://api.cloudflare.com/client/v4/accounts/${accountId}/ai/v1/chat/completions`,
     {
       method: "POST",
 
@@ -51,6 +90,8 @@ export const generateProjectPlan = async ({
       },
 
       body: JSON.stringify({
+        model: MODEL,
+
         messages: [
           {
             role: "system",
@@ -61,9 +102,9 @@ You are a senior web product consultant.
 Analyse the user's project idea and create a concise,
 realistic plan for a freelance web development project.
 
-Return ONLY valid JSON.
+Return only valid JSON.
 
-The response must have exactly this structure:
+Required structure:
 
 {
   "type": "string",
@@ -75,12 +116,11 @@ The response must have exactly this structure:
 }
 
 Rules:
-- Return between 3 and 6 features.
-- Do not include markdown.
-- Do not include explanations outside the JSON.
-- Keep recommendations realistic.
-- Do not oversell.
-- Keep the timeline concise.
+- include between 3 and 6 concise features
+- keep the timeline realistic
+- do not use Markdown
+- do not include explanations
+- do not add text before or after the JSON
             `.trim(),
           },
 
@@ -96,51 +136,45 @@ ${description}
           },
         ],
 
-        max_tokens: 500,
-        temperature: 0.3,
+        reasoning_effort: "low",
+
+        response_format: {
+          type: "json_object",
+        },
+
+        temperature: 0.2,
+
+        max_completion_tokens: 1400,
       }),
     },
   );
 
   const data = (await response.json()) as CloudflareAIResponse;
 
-  if (!response.ok || !data.success) {
-    console.error("Cloudflare AI error:", data.errors);
+  if (!response.ok) {
+    console.error("Cloudflare AI error:", data);
 
-    throw new Error(
-      data.errors?.[0]?.message || "Cloudflare AI request failed.",
-    );
+    throw new Error(data.error?.message || "Cloudflare AI request failed.");
   }
 
-  const output = data.result?.response;
+  const choice = data.choices?.[0];
 
-  if (!output) {
+  if (choice?.finish_reason === "length") {
+    console.error("Cloudflare AI hit token limit:", data);
+
+    throw new Error("Cloudflare AI response exceeded the token limit.");
+  }
+
+  const content = choice?.message?.content;
+
+  if (!content) {
+    console.error(
+      "Unexpected Cloudflare response:",
+      JSON.stringify(data, null, 2),
+    );
+
     throw new Error("Cloudflare AI returned an empty response.");
   }
 
-  let parsed: ProjectPlan;
-
-  try {
-    parsed = JSON.parse(output) as ProjectPlan;
-  } catch {
-    console.error("Invalid Cloudflare AI response:", output);
-
-    throw new Error("Cloudflare AI returned invalid JSON.");
-  }
-
-  if (
-    !parsed.type ||
-    !parsed.complexity ||
-    !parsed.timeline ||
-    !Array.isArray(parsed.features)
-  ) {
-    throw new Error("Cloudflare AI returned an invalid project plan.");
-  }
-
-  return {
-    type: parsed.type,
-    complexity: parsed.complexity,
-    timeline: parsed.timeline,
-    features: parsed.features.slice(0, 6),
-  };
+  return parseProjectPlan(content);
 };
