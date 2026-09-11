@@ -1,4 +1,5 @@
 import profileImage from "../../assets/images/Me.png";
+
 import "./About.css";
 
 const technologies = [
@@ -22,6 +23,7 @@ const About = () => {
 
             <div className="about__photo-caption">
               <span>Developer</span>
+
               <span>Based in Bulgaria</span>
             </div>
           </div>
@@ -51,16 +53,19 @@ const About = () => {
             <div className="about__info">
               <div className="about__info-row">
                 <span>Education</span>
+
                 <p>Computer Systems and Technologies</p>
               </div>
 
               <div className="about__info-row">
                 <span>Focus</span>
+
                 <p>Web Development & Digital Products</p>
               </div>
 
               <div className="about__info-row">
                 <span>Availability</span>
+
                 <p>Freelance projects & selected opportunities</p>
               </div>
             </div>
