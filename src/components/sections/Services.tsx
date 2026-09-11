@@ -1,4 +1,5 @@
 import { useState } from "react";
+
 import "./Services.css";
 
 const services = [
@@ -31,6 +32,9 @@ const services = [
 const Services = () => {
   const [activeIndex, setActiveIndex] = useState(0);
 
+  const progress =
+    services.length > 1 ? (activeIndex / (services.length - 1)) * 100 : 0;
+
   return (
     <section id="services" className="services">
       <div className="services__container">
@@ -46,9 +50,11 @@ const Services = () => {
           <div className="services__line">
             <div
               className="services__line-progress"
-              style={{
-                width: `${(activeIndex / (services.length - 1)) * 100}%`,
-              }}
+              style={
+                {
+                  "--progress": `${progress}%`,
+                } as React.CSSProperties
+              }
             />
           </div>
 
