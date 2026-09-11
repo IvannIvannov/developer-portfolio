@@ -1,9 +1,11 @@
 import { useEffect } from "react";
+
 import { Link, Navigate, useParams } from "react-router-dom";
 
 import { ArrowLeft, ArrowUpRight } from "lucide-react";
 
 import { projects } from "../data/projects";
+
 import Footer from "../components/layout/Footer";
 
 import "./ProjectDetails.css";
