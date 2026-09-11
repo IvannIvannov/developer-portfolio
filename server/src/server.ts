@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 
 import contactRoutes from "./routes/contactRoutes.js";
+import aiRoutes from "./routes/aiRoutes.js";
 
 dotenv.config();
 
@@ -43,6 +44,8 @@ app.get("/api/health", (_req, res) => {
 });
 
 app.use("/api/contact", contactRoutes);
+
+app.use("/api/ai", aiRoutes);
 
 app.use((_req, res) => {
   res.status(404).json({
