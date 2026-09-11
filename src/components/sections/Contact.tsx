@@ -25,6 +25,7 @@ type ProjectPlan = {
 
 type AIProjectSelection = {
   selectedProjectType: string;
+  originalDescription: string;
   plan: ProjectPlan;
 };
 
@@ -72,7 +73,8 @@ const Contact = () => {
     const handleAIProjectSelection = (event: Event) => {
       const customEvent = event as CustomEvent<AIProjectSelection>;
 
-      const { selectedProjectType, plan } = customEvent.detail;
+      const { selectedProjectType, originalDescription, plan } =
+        customEvent.detail;
 
       const validProjectType = projectTypes.includes(selectedProjectType)
         ? selectedProjectType
@@ -84,6 +86,10 @@ const Contact = () => {
           : validProjectType;
 
       const aiMessage = [
+        "Original project idea",
+        "",
+        originalDescription,
+        "",
         "AI Project Planner summary",
         "",
         `Recommended project: ${plan.type}`,

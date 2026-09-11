@@ -20,6 +20,7 @@ type ProjectPlanResponse = {
 
 type AIProjectSelection = {
   selectedProjectType: string;
+  originalDescription: string;
   plan: ProjectPlan;
 };
 
@@ -100,6 +101,7 @@ const AIProjectPlanner = () => {
 
     const projectSelection: AIProjectSelection = {
       selectedProjectType: projectType,
+      originalDescription: description.trim(),
       plan,
     };
 
