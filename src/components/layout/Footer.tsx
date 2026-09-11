@@ -21,17 +21,25 @@ const Footer = () => {
           </div>
 
           <div className="footer__links">
-            <a href="mailto:your@email.com">
+            <a href="mailto:ivann.ivannov26@icloud.com">
               <Mail size={15} />
               Email
             </a>
 
-            <a href="https://github.com/" target="_blank" rel="noreferrer">
+            <a
+              href="https://github.com/IvannIvannov"
+              target="_blank"
+              rel="noreferrer"
+            >
               GitHub
               <ArrowUpRight size={13} />
             </a>
 
-            <a href="https://linkedin.com/" target="_blank" rel="noreferrer">
+            <a
+              href="https://www.linkedin.com/in/ivan-ivanov-673972360/"
+              target="_blank"
+              rel="noreferrer"
+            >
               LinkedIn
               <ArrowUpRight size={13} />
             </a>

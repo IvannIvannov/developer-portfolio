@@ -231,9 +231,9 @@ const Contact = () => {
               little about it and I’ll get back to you.
             </p>
 
-            <a href="mailto:your@email.com">
+            <a href="mailto:ivann.ivannov26@icloud.com">
               <Mail size={15} />
-              your@email.com
+              ivann.ivannov26@icloud.com
               <ArrowUpRight size={14} />
             </a>
           </div>
