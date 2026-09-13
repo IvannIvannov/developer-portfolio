@@ -2,6 +2,7 @@
   "name": "portfolio-server",
   "version": "1.0.0",
   "private": true,
+  "description": "Backend API for the developer portfolio, handling contact enquiries, email delivery, security validation and AI project planning.",
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/server.ts",

@@ -1,7 +1,8 @@
 {
   "name": "developer-portfolio",
+  "version": "1.0.0",
   "private": true,
-  "version": "0.0.0",
+  "description": "Personal developer portfolio built with React, TypeScript, Vite and Tailwind CSS.",
   "type": "module",
   "scripts": {
     "dev": "vite",
