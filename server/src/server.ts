@@ -11,7 +11,12 @@ const app = express();
 
 const PORT = Number(process.env.PORT) || 5000;
 
-const allowedOrigins = ["http://localhost:5173"];
+const allowedOrigins = (
+  process.env.CORS_ORIGINS ?? "http://localhost:5173"
+)
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
 
 app.disable("x-powered-by");
 
@@ -25,8 +30,8 @@ app.use(
 
       callback(new Error("Origin not allowed by CORS"));
     },
-
     methods: ["GET", "POST"],
+    allowedHeaders: ["Content-Type"],
   }),
 );
 
@@ -44,7 +49,6 @@ app.get("/api/health", (_req, res) => {
 });
 
 app.use("/api/contact", contactRoutes);
-
 app.use("/api/ai", aiRoutes);
 
 app.use((_req, res) => {
@@ -54,6 +58,35 @@ app.use((_req, res) => {
   });
 });
 
+app.use(
+  (
+    error: Error,
+    _req: express.Request,
+    res: express.Response,
+    next: express.NextFunction,
+  ) => {
+    if (res.headersSent) {
+      next(error);
+      return;
+    }
+
+    if (error.message === "Origin not allowed by CORS") {
+      res.status(403).json({
+        success: false,
+        message: "Origin not allowed.",
+      });
+      return;
+    }
+
+    console.error("Unhandled server error:", error);
+
+    res.status(500).json({
+      success: false,
+      message: "Internal server error.",
+    });
+  },
+);
+
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Portfolio server running on port ${PORT}`);
 });
