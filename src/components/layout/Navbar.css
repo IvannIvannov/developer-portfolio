@@ -48,6 +48,10 @@
 }
 
 .navbar__logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+
     font-size: 18px;
     font-weight: 600;
 
@@ -61,6 +65,15 @@
 
 .navbar__logo:hover {
     opacity: 0.75;
+}
+
+.navbar__logo-mark {
+    width: 32px;
+    height: 32px;
+
+    flex-shrink: 0;
+
+    border-radius: 8px;
 }
 
 .navbar__nav {
@@ -183,6 +196,11 @@
     .navbar__logo {
         font-size: 16px;
     }
+
+    .navbar__logo-mark {
+    width: 30px;
+    height: 30px;
+}
 
     .navbar__nav {
         display: none;

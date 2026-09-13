@@ -96,7 +96,14 @@ const Navbar = () => {
           onClick={closeMenu}
           aria-label="Ivan Ivanov — go to homepage"
         >
-          Ivan Ivanov
+          <img
+            src="/favicon.svg"
+            alt=""
+            className="navbar__logo-mark"
+            aria-hidden="true"
+          />
+
+          <span>Ivan Ivanov</span>
         </a>
 
         <nav className="navbar__nav" aria-label="Primary navigation">
