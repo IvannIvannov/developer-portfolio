@@ -1,6 +1,7 @@
-import profileImage from "../../assets/images/Me.png";
-
 import "./About.css";
+
+const PROFILE_IMAGE_URL =
+  "https://res.cloudinary.com/mxjelcos/image/upload/f_auto,q_auto,w_900/v1789289615/me2.png";
 
 const technologies = [
   "React",
@@ -18,12 +19,18 @@ const About = () => {
         <div className="about__grid">
           <div className="about__visual">
             <div className="about__photo">
-              <img src={profileImage} alt="Ivan Ivanov" />
+              <img
+                src={PROFILE_IMAGE_URL}
+                alt="Ivan Ivanov"
+                width={900}
+                height={900}
+                loading="lazy"
+                decoding="async"
+              />
             </div>
 
             <div className="about__photo-caption">
               <span>Developer</span>
-
               <span>Based in Bulgaria</span>
             </div>
           </div>
@@ -53,19 +60,16 @@ const About = () => {
             <div className="about__info">
               <div className="about__info-row">
                 <span>Education</span>
-
                 <p>Computer Systems and Technologies</p>
               </div>
 
               <div className="about__info-row">
                 <span>Focus</span>
-
                 <p>Web Development & Digital Products</p>
               </div>
 
               <div className="about__info-row">
                 <span>Availability</span>
-
                 <p>Freelance projects & selected opportunities</p>
               </div>
             </div>
