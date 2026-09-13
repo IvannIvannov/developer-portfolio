@@ -60,6 +60,8 @@ const budgets = [
   "€2,500+",
 ];
 
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 const Contact = () => {
   const [step, setStep] = useState(1);
 
@@ -138,10 +140,27 @@ const Contact = () => {
 
   const handleNext = () => {
     if (step === 1) {
-      if (!formData.name.trim() || !formData.email.trim()) {
+      const cleanName = formData.name.trim();
+      const cleanEmail = formData.email.trim();
+
+      if (!cleanName || !cleanEmail) {
+        setError("Please enter your name and email address.");
         return;
       }
+
+      if (!EMAIL_PATTERN.test(cleanEmail)) {
+        setError("Please enter a valid email address.");
+        return;
+      }
+
+      setFormData((current) => ({
+        ...current,
+        name: cleanName,
+        email: cleanEmail,
+      }));
     }
+
+    setError("");
 
     if (step < 3) {
       setStep((current) => current + 1);
@@ -149,6 +168,8 @@ const Contact = () => {
   };
 
   const handlePrevious = () => {
+    setError("");
+
     if (step > 1) {
       setStep((current) => current - 1);
     }
@@ -157,15 +178,15 @@ const Contact = () => {
   const handleSubmit = async (event: SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (!formData.message.trim()) {
-      setError("Please tell me a little about your project.");
+    const cleanMessage = formData.message.trim();
 
+    if (!cleanMessage) {
+      setError("Please tell me a little about your project.");
       return;
     }
 
     if (!turnstileToken) {
       setError("Please complete the security check.");
-
       return;
     }
 
@@ -183,6 +204,9 @@ const Contact = () => {
 
         body: JSON.stringify({
           ...formData,
+          name: formData.name.trim(),
+          email: formData.email.trim(),
+          message: cleanMessage,
           turnstileToken,
         }),
       });
@@ -255,7 +279,7 @@ const Contact = () => {
             </div>
           </div>
 
-          <form className="contact__form" onSubmit={handleSubmit}>
+          <form className="contact__form" onSubmit={handleSubmit} noValidate>
             {step === 1 && (
               <div className="contact__step">
                 <div className="contact__step-header">
@@ -276,6 +300,8 @@ const Contact = () => {
                       }
                       placeholder="John Smith"
                       autoComplete="name"
+                      maxLength={100}
+                      required
                     />
                   </label>
 
@@ -290,9 +316,13 @@ const Contact = () => {
                       }
                       placeholder="john@company.com"
                       autoComplete="email"
+                      maxLength={254}
+                      required
                     />
                   </label>
                 </div>
+
+                {error && <p className="contact__error">{error}</p>}
 
                 <div className="contact__actions contact__actions--end">
                   <button
@@ -412,6 +442,7 @@ const Contact = () => {
                     }
                     placeholder="Tell me about your idea, goals, timeline or anything else that would be useful to know..."
                     maxLength={2000}
+                    required
                   />
 
                   <small>{formData.message.length} / 2000</small>
