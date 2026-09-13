@@ -24,19 +24,22 @@ const Hero = () => {
           <div className="hero__actions">
             <a href="#projects" className="hero__button hero__button--primary">
               View my work
-              <ArrowDown size={17} />
+              <ArrowDown size={17} aria-hidden="true" />
             </a>
 
-            <a href="#contact" className="hero__button hero__button--secondary">
+            <a
+              href="#ai-project-planner"
+              className="hero__button hero__button--secondary"
+            >
               Start a project
-              <ArrowUpRight size={17} />
+              <ArrowUpRight size={17} aria-hidden="true" />
             </a>
           </div>
         </div>
 
         <div className="hero__footer">
           <div className="hero__availability">
-            <span className="hero__status" />
+            <span className="hero__status" aria-hidden="true" />
 
             <p>Available for freelance projects and selected opportunities.</p>
           </div>
