@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-
 import type { SyntheticEvent } from "react";
 
 import { Turnstile } from "@marsidev/react-turnstile";
 
 import { ArrowLeft, ArrowRight, ArrowUpRight, Check, Mail } from "lucide-react";
+
+import { API_URL, TURNSTILE_SITE_KEY } from "../../config/env";
 
 import "./Contact.css";
 
@@ -27,6 +28,11 @@ type AIProjectSelection = {
   selectedProjectType: string;
   originalDescription: string;
   plan: ProjectPlan;
+};
+
+type ContactResponse = {
+  success?: boolean;
+  message?: string;
 };
 
 const initialFormData: ContactFormData = {
@@ -53,8 +59,6 @@ const budgets = [
   "€1,000–€2,500",
   "€2,500+",
 ];
-
-const API_URL = import.meta.env.VITE_API_URL;
 
 const Contact = () => {
   const [step, setStep] = useState(1);
@@ -102,14 +106,11 @@ const Contact = () => {
 
       setFormData((current) => ({
         ...current,
-
         projectType: finalProjectType,
-
         message: aiMessage,
       }));
 
       setStep(1);
-
       setError("");
       setIsSuccess(false);
       setTurnstileToken("");
@@ -186,7 +187,7 @@ const Contact = () => {
         }),
       });
 
-      const data = await response.json();
+      const data = (await response.json()) as ContactResponse;
 
       if (!response.ok) {
         throw new Error(
@@ -195,11 +196,8 @@ const Contact = () => {
       }
 
       setIsSuccess(true);
-
       setFormData(initialFormData);
-
       setTurnstileToken("");
-
       setStep(1);
     } catch (requestError) {
       if (requestError instanceof Error) {
@@ -422,29 +420,25 @@ const Contact = () => {
                 <div className="contact__summary">
                   <div>
                     <span>Name</span>
-
                     <strong>{formData.name}</strong>
                   </div>
 
                   <div>
                     <span>Project</span>
-
                     <strong>{formData.projectType}</strong>
                   </div>
 
                   <div>
                     <span>Budget</span>
-
                     <strong>{formData.budget}</strong>
                   </div>
                 </div>
 
                 <div className="contact__turnstile">
                   <Turnstile
-                    siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
+                    siteKey={TURNSTILE_SITE_KEY}
                     onSuccess={(token) => {
                       setTurnstileToken(token);
-
                       setError("");
                     }}
                     onExpire={() => {

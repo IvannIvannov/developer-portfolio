@@ -1,8 +1,9 @@
 import { useState } from "react";
-
 import type { SyntheticEvent } from "react";
 
 import { ArrowUpRight, Check, Sparkles, WandSparkles } from "lucide-react";
+
+import { API_URL } from "../../config/env";
 
 import "./AIProjectPlanner.css";
 
@@ -34,17 +35,12 @@ const projectTypes = [
   "AI-powered Product",
 ];
 
-const API_URL = import.meta.env.VITE_API_URL;
-
 const AIProjectPlanner = () => {
   const [description, setDescription] = useState("");
-
   const [projectType, setProjectType] = useState("Not sure yet");
 
   const [isGenerating, setIsGenerating] = useState(false);
-
   const [plan, setPlan] = useState<ProjectPlan | null>(null);
-
   const [error, setError] = useState("");
 
   const handleSubmit = async (event: SyntheticEvent<HTMLFormElement>) => {
@@ -63,14 +59,11 @@ const AIProjectPlanner = () => {
     try {
       const response = await fetch(`${API_URL}/api/ai/project-plan`, {
         method: "POST",
-
         headers: {
           "Content-Type": "application/json",
         },
-
         body: JSON.stringify({
           description: cleanDescription,
-
           projectType,
         }),
       });
@@ -102,9 +95,7 @@ const AIProjectPlanner = () => {
 
     const projectSelection: AIProjectSelection = {
       selectedProjectType: projectType,
-
       originalDescription: description.trim(),
-
       plan,
     };
 
@@ -145,7 +136,6 @@ const AIProjectPlanner = () => {
             <div className="ai-planner__panel-top">
               <div>
                 <WandSparkles size={17} />
-
                 <span>Describe your project</span>
               </div>
 
@@ -161,7 +151,6 @@ const AIProjectPlanner = () => {
                   value={description}
                   onChange={(event) => {
                     setDescription(event.target.value);
-
                     setError("");
                   }}
                   maxLength={1000}
@@ -188,7 +177,6 @@ const AIProjectPlanner = () => {
                       }
                       onClick={() => {
                         setProjectType(type);
-
                         setError("");
                       }}
                     >
@@ -261,7 +249,6 @@ const AIProjectPlanner = () => {
                 <div className="ai-planner__result-top">
                   <div>
                     <Sparkles size={16} />
-
                     <span>Project analysis</span>
                   </div>
 
@@ -270,20 +257,17 @@ const AIProjectPlanner = () => {
 
                 <div className="ai-planner__result-title">
                   <span>Recommended project</span>
-
                   <h3>{plan.type}</h3>
                 </div>
 
                 <div className="ai-planner__result-meta">
                   <div>
                     <span>Complexity</span>
-
                     <strong>{plan.complexity}</strong>
                   </div>
 
                   <div>
                     <span>Estimated timeline</span>
-
                     <strong>{plan.timeline}</strong>
                   </div>
                 </div>
@@ -295,7 +279,6 @@ const AIProjectPlanner = () => {
                     {plan.features.map((feature) => (
                       <p key={feature}>
                         <Check size={14} />
-
                         {feature}
                       </p>
                     ))}
