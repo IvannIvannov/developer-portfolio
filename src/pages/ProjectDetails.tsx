@@ -2,7 +2,13 @@ import { useEffect } from "react";
 
 import { Link, Navigate, useParams } from "react-router-dom";
 
-import { ArrowLeft, ArrowUpRight } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  ArrowUpRight,
+  Check,
+  ExternalLink,
+} from "lucide-react";
 
 import { projects } from "../data/projects";
 
@@ -32,25 +38,57 @@ const ProjectDetails = () => {
 
   return (
     <>
-      <main className="case-study">
-        <div className="case-study__container">
-          <div className="case-study__nav">
-            <Link to="/" className="case-study__back">
-              <ArrowLeft size={16} />
+      <main className="project-page">
+        <div className="project-page__container">
+          <nav className="project-page__nav">
+            <Link to="/" className="project-page__back">
+              <ArrowLeft size={15} />
               Back to portfolio
             </Link>
 
-            <span>{project.number} / Case Study</span>
-          </div>
+            <span>
+              {project.number} / {String(projects.length).padStart(2, "0")}
+            </span>
+          </nav>
 
-          <header className="case-study__hero">
-            <p className="case-study__category">{project.category}</p>
+          <header className="project-hero">
+            <p className="project-hero__eyebrow">{project.category}</p>
 
-            <h1>{project.title}</h1>
+            <div className="project-hero__heading">
+              <h1>{project.title}</h1>
 
-            <p className="case-study__description">{project.description}</p>
+              <div className="project-hero__side">
+                <p>{project.shortDescription}</p>
 
-            <div className="case-study__meta">
+                <div className="project-hero__actions">
+                  {project.liveUrl && (
+                    <a
+                      href={project.liveUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="project-hero__live"
+                    >
+                      View live project
+                      <ExternalLink size={17} />
+                    </a>
+                  )}
+
+                  {project.githubUrl && (
+                    <a
+                      href={project.githubUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="project-hero__source"
+                    >
+                      View code
+                      <ArrowUpRight size={16} />
+                    </a>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className="project-hero__meta">
               <div>
                 <span>Year</span>
 
@@ -64,124 +102,112 @@ const ProjectDetails = () => {
               </div>
 
               <div>
-                <span>Technologies</span>
+                <span>Built with</span>
 
-                <strong>{project.technologies.slice(0, 3).join(" · ")}</strong>
+                <strong>{project.technologies.slice(0, 4).join(" · ")}</strong>
               </div>
             </div>
           </header>
 
-          <div className="case-study__visual">
+          <section className="project-preview">
             {project.image ? (
-              <img src={project.image} alt={project.title} />
+              <img
+                src={project.image}
+                alt={`${project.title} website preview`}
+              />
             ) : (
-              <div className="case-study__visual-placeholder">
+              <div className="project-preview__placeholder">
                 <span>{project.number}</span>
 
-                <strong>{project.title}</strong>
+                <div>
+                  <p>Project preview</p>
 
-                <p>Project preview</p>
+                  <strong>{project.title}</strong>
+                </div>
               </div>
             )}
-          </div>
 
-          <section className="case-study__section">
-            <span className="case-study__section-number">01</span>
+            {project.liveUrl && (
+              <a
+                href={project.liveUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="project-preview__visit"
+              >
+                <span>Open website</span>
 
-            <div className="case-study__section-content">
-              <p className="case-study__section-label">The challenge</p>
-
-              <h2>Problem</h2>
-
-              <p>{project.problem}</p>
-            </div>
+                <ArrowUpRight size={18} />
+              </a>
+            )}
           </section>
 
-          <section className="case-study__section">
-            <span className="case-study__section-number">02</span>
+          <section className="project-summary">
+            <div className="project-summary__heading">
+              <span>About the project</span>
 
-            <div className="case-study__section-content">
-              <p className="case-study__section-label">The approach</p>
-
-              <h2>Solution</h2>
-
-              <p>{project.solution}</p>
+              <h2>
+                Built with a clear
+                <span> purpose.</span>
+              </h2>
             </div>
+
+            <p className="project-summary__text">{project.description}</p>
           </section>
 
-          <section className="case-study__features">
-            <div className="case-study__features-header">
-              <span>03</span>
+          <section className="project-features">
+            <div className="project-features__header">
+              <span>Key features</span>
 
-              <div>
-                <p>Key Features</p>
-
-                <h2>What the project includes.</h2>
-              </div>
+              <span>{String(project.features.length).padStart(2, "0")}</span>
             </div>
 
-            <div className="case-study__features-grid">
-              {project.features.map((feature, index) => (
-                <div className="case-study__feature" key={feature}>
-                  <span>{String(index + 1).padStart(2, "0")}</span>
+            <div className="project-features__grid">
+              {project.features.slice(0, 6).map((feature, index) => (
+                <div className="project-feature" key={feature}>
+                  <span className="project-feature__icon">
+                    <Check size={14} />
+                  </span>
 
-                  <p>{feature}</p>
+                  <div>
+                    <span>{String(index + 1).padStart(2, "0")}</span>
+
+                    <p>{feature}</p>
+                  </div>
                 </div>
               ))}
             </div>
           </section>
 
-          <section className="case-study__section">
-            <span className="case-study__section-number">04</span>
+          {project.liveUrl && (
+            <section className="project-cta">
+              <div>
+                <span>Explore the project</span>
 
-            <div className="case-study__section-content">
-              <p className="case-study__section-label">Development</p>
+                <h2>See it in action.</h2>
 
-              <h2>Challenges</h2>
+                <p>Open the live version and explore the project yourself.</p>
+              </div>
 
-              <p>{project.challenges}</p>
-            </div>
-          </section>
-
-          <section className="case-study__stack">
-            <p>Technology Stack</p>
-
-            <div>
-              {project.technologies.map((technology) => (
-                <span key={technology}>{technology}</span>
-              ))}
-            </div>
-          </section>
-
-          {(project.liveUrl || project.githubUrl) && (
-            <section className="case-study__links">
-              {project.liveUrl && (
-                <a href={project.liveUrl} target="_blank" rel="noreferrer">
-                  Live project
-                  <ArrowUpRight size={17} />
-                </a>
-              )}
-
-              {project.githubUrl && (
-                <a href={project.githubUrl} target="_blank" rel="noreferrer">
-                  View code
-                  <ArrowUpRight size={17} />
-                </a>
-              )}
+              <a href={project.liveUrl} target="_blank" rel="noreferrer">
+                Visit live project
+                <ArrowUpRight size={19} />
+              </a>
             </section>
           )}
 
-          <section className="case-study__next">
-            <span>Next project</span>
+          <section className="project-next">
+            <div className="project-next__top">
+              <span>Next project</span>
+
+              <span>{nextProject.number}</span>
+            </div>
 
             <Link to={`/projects/${nextProject.slug}`}>
-              <div>
-                <span>{nextProject.number}</span>
+              <h2>{nextProject.title}</h2>
 
-                <h2>{nextProject.title}</h2>
-              </div>
-
-              <ArrowUpRight size={30} />
+              <span className="project-next__arrow">
+                <ArrowRight size={22} />
+              </span>
             </Link>
           </section>
         </div>
