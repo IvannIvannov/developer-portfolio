@@ -26,17 +26,21 @@
     width: 500px;
     height: 500px;
 
-    transform: translateX(-50%);
+    transform:
+        translateX(-50%) scale(0.94);
 
     border-radius: 50%;
 
-    background: rgba(255, 255, 255, 0.04);
+    background:
+        rgba(255, 255, 255, 0.04);
 
     filter: blur(130px);
 
     opacity: 0;
 
-    animation: heroGlowIn 1.2s ease 0.2s forwards;
+    transition:
+        opacity 1s ease 0.1s,
+        transform 1s ease 0.1s;
 }
 
 .hero__container {
@@ -61,6 +65,77 @@
     overflow: visible;
 }
 
+/* SCROLL REVEAL */
+
+.hero__eyebrow {
+    opacity: 0;
+
+    transform: translateY(14px);
+
+    transition:
+        opacity 0.7s ease,
+        transform 0.7s ease;
+}
+
+.hero__title {
+    opacity: 0;
+
+    transform: translateY(18px);
+
+    transition:
+        opacity 0.8s ease 0.08s,
+        transform 0.8s ease 0.08s;
+}
+
+.hero__description {
+    opacity: 0;
+
+    transform: translateY(16px);
+
+    transition:
+        opacity 0.75s ease 0.16s,
+        transform 0.75s ease 0.16s;
+}
+
+.hero__actions {
+    opacity: 0;
+
+    transform: translateY(16px);
+
+    transition:
+        opacity 0.75s ease 0.24s,
+        transform 0.75s ease 0.24s;
+}
+
+.hero__footer {
+    opacity: 0;
+
+    transform: translateY(12px);
+
+    transition:
+        opacity 0.7s ease 0.32s,
+        transform 0.7s ease 0.32s;
+}
+
+.hero--visible .hero__glow {
+    opacity: 1;
+
+    transform:
+        translateX(-50%) scale(1);
+}
+
+.hero--visible .hero__eyebrow,
+.hero--visible .hero__title,
+.hero--visible .hero__description,
+.hero--visible .hero__actions,
+.hero--visible .hero__footer {
+    opacity: 1;
+
+    transform: translateY(0);
+}
+
+/* EYEBROW */
+
 .hero__eyebrow {
     margin: 0 0 24px;
 
@@ -72,12 +147,9 @@
     text-transform: uppercase;
 
     color: #737373;
-
-    opacity: 0;
-    transform: translateY(14px);
-
-    animation: heroReveal 0.7s ease 0.05s forwards;
 }
+
+/* TITLE */
 
 .hero__title {
     display: block;
@@ -88,7 +160,10 @@
 
     margin: 0;
 
-    font-size: clamp(56px, 6vw, 88px);
+    font-size:
+        clamp(56px,
+            6vw,
+            88px);
 
     line-height: 1.12;
 
@@ -101,11 +176,6 @@
     white-space: normal;
 
     overflow: visible;
-
-    opacity: 0;
-    transform: translateY(18px);
-
-    animation: heroReveal 0.8s ease 0.14s forwards;
 }
 
 .hero__title span {
@@ -144,6 +214,8 @@
         heroGradientShift 8s ease-in-out infinite;
 }
 
+/* DESCRIPTION */
+
 .hero__description {
     width: 100%;
     max-width: 680px;
@@ -155,12 +227,9 @@
     line-height: 1.7;
 
     color: #a3a3a3;
-
-    opacity: 0;
-    transform: translateY(16px);
-
-    animation: heroReveal 0.75s ease 0.24s forwards;
 }
+
+/* ACTIONS */
 
 .hero__actions {
     display: flex;
@@ -168,15 +237,11 @@
     gap: 16px;
 
     margin-top: 40px;
-
-    opacity: 0;
-    transform: translateY(16px);
-
-    animation: heroReveal 0.75s ease 0.34s forwards;
 }
 
 .hero__button {
     display: inline-flex;
+
     align-items: center;
     justify-content: center;
 
@@ -224,6 +289,8 @@
         rgba(255, 255, 255, 0.05);
 }
 
+/* FOOTER */
+
 .hero__footer {
     display: flex;
 
@@ -238,15 +305,11 @@
 
     border-top:
         1px solid rgba(255, 255, 255, 0.1);
-
-    opacity: 0;
-    transform: translateY(12px);
-
-    animation: heroReveal 0.7s ease 0.46s forwards;
 }
 
 .hero__availability {
     display: flex;
+
     align-items: center;
 
     gap: 12px;
@@ -289,35 +352,7 @@
     color: #525252;
 }
 
-@keyframes heroReveal {
-    from {
-        opacity: 0;
-
-        transform: translateY(18px);
-    }
-
-    to {
-        opacity: 1;
-
-        transform: translateY(0);
-    }
-}
-
-@keyframes heroGlowIn {
-    from {
-        opacity: 0;
-
-        transform:
-            translateX(-50%) scale(0.92);
-    }
-
-    to {
-        opacity: 1;
-
-        transform:
-            translateX(-50%) scale(1);
-    }
-}
+/* GRADIENT */
 
 @keyframes heroGradientShift {
     0% {
@@ -332,6 +367,8 @@
         background-position: 0% 50%;
     }
 }
+
+/* STATUS */
 
 @keyframes statusPulse {
     0% {
@@ -477,6 +514,7 @@
 
     .hero__actions {
         display: flex;
+
         flex-direction: column;
 
         width: 100%;
@@ -607,11 +645,12 @@
 
         transform: none;
 
-        animation: none;
+        transition: none;
     }
 
     .hero__title span {
         background-position: 50% 50%;
+
         animation: none;
     }
 
