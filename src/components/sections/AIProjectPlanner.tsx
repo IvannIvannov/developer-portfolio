@@ -1,9 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import type { SyntheticEvent } from "react";
 
 import { ArrowUpRight, Check, Sparkles, WandSparkles } from "lucide-react";
 
 import { API_URL } from "../../config/env";
+import useSectionReveal from "../../hooks/useSectionReveal";
 
 import "./AIProjectPlanner.css";
 
@@ -36,38 +37,17 @@ const projectTypes = [
 ];
 
 const AIProjectPlanner = () => {
-  const sectionRef = useRef<HTMLElement>(null);
+  const { elementRef: sectionRef, isVisible } = useSectionReveal<HTMLElement>();
 
-  const [isVisible, setIsVisible] = useState(false);
   const [description, setDescription] = useState("");
+
   const [projectType, setProjectType] = useState("Not sure yet");
+
   const [isGenerating, setIsGenerating] = useState(false);
+
   const [plan, setPlan] = useState<ProjectPlan | null>(null);
+
   const [error, setError] = useState("");
-
-  useEffect(() => {
-    const section = sectionRef.current;
-
-    if (!section) {
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsVisible(entry.isIntersecting);
-      },
-      {
-        threshold: 0.15,
-        rootMargin: "0px 0px -8% 0px",
-      },
-    );
-
-    observer.observe(section);
-
-    return () => {
-      observer.disconnect();
-    };
-  }, []);
 
   const handleSubmit = async (event: SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -182,6 +162,7 @@ const AIProjectPlanner = () => {
                   value={description}
                   onChange={(event) => {
                     setDescription(event.target.value);
+
                     setError("");
                   }}
                   maxLength={1000}
@@ -213,6 +194,7 @@ const AIProjectPlanner = () => {
                       aria-pressed={projectType === type}
                       onClick={() => {
                         setProjectType(type);
+
                         setError("");
                       }}
                     >
@@ -329,6 +311,7 @@ const AIProjectPlanner = () => {
                     {plan.features.map((feature) => (
                       <p key={feature}>
                         <Check size={14} aria-hidden="true" />
+
                         {feature}
                       </p>
                     ))}
