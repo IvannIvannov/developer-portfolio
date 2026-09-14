@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import { Braces, GitBranch, Layers3, Sparkles } from "lucide-react";
 
 import "./TechStack.css";
@@ -28,26 +29,57 @@ const technologiesRowTwo = [
 
 const highlights = [
   {
-    icon: <Braces size={18} />,
+    icon: <Braces size={18} aria-hidden="true" />,
     label: "Clean Code",
   },
   {
-    icon: <Layers3 size={18} />,
+    icon: <Layers3 size={18} aria-hidden="true" />,
     label: "Responsive UI",
   },
   {
-    icon: <GitBranch size={18} />,
+    icon: <GitBranch size={18} aria-hidden="true" />,
     label: "Version Control",
   },
   {
-    icon: <Sparkles size={18} />,
+    icon: <Sparkles size={18} aria-hidden="true" />,
     label: "AI Integration",
   },
 ];
 
 const TechStack = () => {
+  const sectionRef = useRef<HTMLElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const section = sectionRef.current;
+
+    if (!section) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsVisible(entry.isIntersecting);
+      },
+      {
+        threshold: 0.15,
+        rootMargin: "0px 0px -8% 0px",
+      },
+    );
+
+    observer.observe(section);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
   return (
-    <section id="tech-stack" className="tech-stack">
+    <section
+      ref={sectionRef}
+      id="tech-stack"
+      className={`tech-stack ${isVisible ? "tech-stack--visible" : ""}`}
+    >
       <div className="tech-stack__container">
         <div className="tech-stack__header">
           <p className="tech-stack__eyebrow">Tech Stack</p>
@@ -69,7 +101,7 @@ const TechStack = () => {
           <div className="tech-stack__visual">
             <div className="frontend-window">
               <div className="frontend-window__top">
-                <div className="frontend-window__dots">
+                <div className="frontend-window__dots" aria-hidden="true">
                   <span />
                   <span />
                   <span />
@@ -245,7 +277,6 @@ const TechStack = () => {
           {highlights.map((item) => (
             <div className="tech-stack__highlight" key={item.label}>
               {item.icon}
-
               <span>{item.label}</span>
             </div>
           ))}
