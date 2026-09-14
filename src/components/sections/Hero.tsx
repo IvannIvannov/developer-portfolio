@@ -1,35 +1,11 @@
-import { useEffect, useRef, useState } from "react";
 import { ArrowDown, ArrowUpRight } from "lucide-react";
+
+import useSectionReveal from "../../hooks/useSectionReveal";
 
 import "./Hero.css";
 
 const Hero = () => {
-  const sectionRef = useRef<HTMLElement>(null);
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    const section = sectionRef.current;
-
-    if (!section) {
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsVisible(entry.isIntersecting);
-      },
-      {
-        threshold: 0.15,
-        rootMargin: "0px 0px -8% 0px",
-      },
-    );
-
-    observer.observe(section);
-
-    return () => {
-      observer.disconnect();
-    };
-  }, []);
+  const { elementRef: sectionRef, isVisible } = useSectionReveal<HTMLElement>();
 
   return (
     <section
@@ -37,7 +13,7 @@ const Hero = () => {
       id="home"
       className={`hero ${isVisible ? "hero--visible" : ""}`}
     >
-      <div className="hero__glow" />
+      <div className="hero__glow" aria-hidden="true" />
 
       <div className="hero__container">
         <div className="hero__content">
