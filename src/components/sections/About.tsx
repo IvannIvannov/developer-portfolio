@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import useSectionReveal from "../../hooks/useSectionReveal";
 
 import "./About.css";
 
@@ -15,32 +15,7 @@ const technologies = [
 ];
 
 const About = () => {
-  const sectionRef = useRef<HTMLElement>(null);
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    const section = sectionRef.current;
-
-    if (!section) {
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsVisible(entry.isIntersecting);
-      },
-      {
-        threshold: 0.15,
-        rootMargin: "0px 0px -8% 0px",
-      },
-    );
-
-    observer.observe(section);
-
-    return () => {
-      observer.disconnect();
-    };
-  }, []);
+  const { elementRef: sectionRef, isVisible } = useSectionReveal<HTMLElement>();
 
   return (
     <section
@@ -93,16 +68,19 @@ const About = () => {
             <div className="about__info">
               <div className="about__info-row">
                 <span>Education</span>
+
                 <p>Computer Systems and Technologies</p>
               </div>
 
               <div className="about__info-row">
                 <span>Focus</span>
+
                 <p>Web Development & Digital Products</p>
               </div>
 
               <div className="about__info-row">
                 <span>Availability</span>
+
                 <p>Freelance projects & selected opportunities</p>
               </div>
             </div>
