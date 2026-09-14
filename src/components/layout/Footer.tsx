@@ -1,35 +1,11 @@
-import { useEffect, useRef, useState } from "react";
 import { ArrowUp, ArrowUpRight, Mail } from "lucide-react";
+
+import useSectionReveal from "../../hooks/useSectionReveal";
 
 import "./Footer.css";
 
 const Footer = () => {
-  const footerRef = useRef<HTMLElement>(null);
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    const footer = footerRef.current;
-
-    if (!footer) {
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsVisible(entry.isIntersecting);
-      },
-      {
-        threshold: 0.15,
-        rootMargin: "0px 0px -8% 0px",
-      },
-    );
-
-    observer.observe(footer);
-
-    return () => {
-      observer.disconnect();
-    };
-  }, []);
+  const { elementRef: footerRef, isVisible } = useSectionReveal<HTMLElement>();
 
   const scrollToTop = () => {
     window.scrollTo({

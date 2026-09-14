@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
+
 import type { KeyboardEvent, SyntheticEvent } from "react";
 
 import { Turnstile } from "@marsidev/react-turnstile";
@@ -6,6 +7,8 @@ import { Turnstile } from "@marsidev/react-turnstile";
 import { ArrowLeft, ArrowRight, ArrowUpRight, Check, Mail } from "lucide-react";
 
 import { API_URL, TURNSTILE_SITE_KEY } from "../../config/env";
+
+import useSectionReveal from "../../hooks/useSectionReveal";
 
 import "./Contact.css";
 
@@ -63,9 +66,8 @@ const budgets = [
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const Contact = () => {
-  const sectionRef = useRef<HTMLElement>(null);
+  const { elementRef: sectionRef, isVisible } = useSectionReveal<HTMLElement>();
 
-  const [isVisible, setIsVisible] = useState(false);
   const [step, setStep] = useState(1);
 
   const [formData, setFormData] = useState<ContactFormData>(initialFormData);
@@ -77,30 +79,6 @@ const Contact = () => {
   const [isSuccess, setIsSuccess] = useState(false);
 
   const [error, setError] = useState("");
-
-  useEffect(() => {
-    const section = sectionRef.current;
-
-    if (!section) {
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsVisible(entry.isIntersecting);
-      },
-      {
-        threshold: 0.15,
-        rootMargin: "0px 0px -8% 0px",
-      },
-    );
-
-    observer.observe(section);
-
-    return () => {
-      observer.disconnect();
-    };
-  }, []);
 
   useEffect(() => {
     const handleAIProjectSelection = (event: Event) => {
@@ -168,6 +146,7 @@ const Contact = () => {
   const handleNext = () => {
     if (step === 1) {
       const cleanName = formData.name.trim();
+
       const cleanEmail = formData.email.trim();
 
       if (!cleanName || !cleanEmail) {
@@ -553,6 +532,7 @@ const Contact = () => {
                     siteKey={TURNSTILE_SITE_KEY}
                     onSuccess={(token) => {
                       setTurnstileToken(token);
+
                       setError("");
                     }}
                     onExpire={() => {
