@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import type { CSSProperties } from "react";
 
 import "./Services.css";
 
@@ -30,13 +31,44 @@ const services = [
 ];
 
 const Services = () => {
+  const sectionRef = useRef<HTMLElement>(null);
+
+  const [isVisible, setIsVisible] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
 
   const progress =
     services.length > 1 ? (activeIndex / (services.length - 1)) * 100 : 0;
 
+  useEffect(() => {
+    const section = sectionRef.current;
+
+    if (!section) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsVisible(entry.isIntersecting);
+      },
+      {
+        threshold: 0.15,
+        rootMargin: "0px 0px -8% 0px",
+      },
+    );
+
+    observer.observe(section);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
   return (
-    <section id="services" className="services">
+    <section
+      ref={sectionRef}
+      id="services"
+      className={`services ${isVisible ? "services--visible" : ""}`}
+    >
       <div className="services__container">
         <div className="services__header">
           <p className="services__eyebrow">Services</p>
@@ -47,13 +79,13 @@ const Services = () => {
         </div>
 
         <div className="services__timeline">
-          <div className="services__line">
+          <div className="services__line" aria-hidden="true">
             <div
               className="services__line-progress"
               style={
                 {
                   "--progress": `${progress}%`,
-                } as React.CSSProperties
+                } as CSSProperties
               }
             />
           </div>
@@ -69,8 +101,9 @@ const Services = () => {
                 onMouseEnter={() => setActiveIndex(index)}
                 onFocus={() => setActiveIndex(index)}
                 onClick={() => setActiveIndex(index)}
+                aria-pressed={activeIndex === index}
               >
-                <div className="service-item__dot">
+                <div className="service-item__dot" aria-hidden="true">
                   <span />
                 </div>
 
@@ -81,8 +114,8 @@ const Services = () => {
             ))}
           </div>
 
-          <div className="services__details">
-            <div className="services__details-number">
+          <div className="services__details" aria-live="polite">
+            <div className="services__details-number" aria-hidden="true">
               {services[activeIndex].number}
             </div>
 
