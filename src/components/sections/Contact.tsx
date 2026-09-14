@@ -255,6 +255,12 @@ const Contact = () => {
 
     const isTextarea = target.tagName === "TEXTAREA";
 
+    const isButton = target.tagName === "BUTTON";
+
+    if (isButton) {
+      return;
+    }
+
     if (step === 1 && !isTextarea) {
       event.preventDefault();
       handleNext();
