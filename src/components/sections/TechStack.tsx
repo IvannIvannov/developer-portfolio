@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState } from "react";
 import { Braces, GitBranch, Layers3, Sparkles } from "lucide-react";
+
+import useSectionReveal from "../../hooks/useSectionReveal";
 
 import "./TechStack.css";
 
@@ -47,32 +48,7 @@ const highlights = [
 ];
 
 const TechStack = () => {
-  const sectionRef = useRef<HTMLElement>(null);
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    const section = sectionRef.current;
-
-    if (!section) {
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsVisible(entry.isIntersecting);
-      },
-      {
-        threshold: 0.15,
-        rootMargin: "0px 0px -8% 0px",
-      },
-    );
-
-    observer.observe(section);
-
-    return () => {
-      observer.disconnect();
-    };
-  }, []);
+  const { elementRef: sectionRef, isVisible } = useSectionReveal<HTMLElement>();
 
   return (
     <section
@@ -277,6 +253,7 @@ const TechStack = () => {
           {highlights.map((item) => (
             <div className="tech-stack__highlight" key={item.label}>
               {item.icon}
+
               <span>{item.label}</span>
             </div>
           ))}
