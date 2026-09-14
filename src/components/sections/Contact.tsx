@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import type { SyntheticEvent } from "react";
+import type { KeyboardEvent, SyntheticEvent } from "react";
 
 import { Turnstile } from "@marsidev/react-turnstile";
 
@@ -66,7 +66,6 @@ const Contact = () => {
   const sectionRef = useRef<HTMLElement>(null);
 
   const [isVisible, setIsVisible] = useState(false);
-
   const [step, setStep] = useState(1);
 
   const [formData, setFormData] = useState<ContactFormData>(initialFormData);
@@ -169,7 +168,6 @@ const Contact = () => {
   const handleNext = () => {
     if (step === 1) {
       const cleanName = formData.name.trim();
-
       const cleanEmail = formData.email.trim();
 
       if (!cleanName || !cleanEmail) {
@@ -218,7 +216,9 @@ const Contact = () => {
     }
 
     if (!turnstileToken) {
-      setError("Please complete the security check.");
+      setError(
+        "Security verification is still loading. Please try again in a moment.",
+      );
 
       return;
     }
@@ -230,9 +230,11 @@ const Contact = () => {
     try {
       const response = await fetch(`${API_URL}/api/contact`, {
         method: "POST",
+
         headers: {
           "Content-Type": "application/json",
         },
+
         body: JSON.stringify({
           ...formData,
           name: formData.name.trim(),
@@ -262,6 +264,36 @@ const Contact = () => {
       }
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleFormKeyDown = (event: KeyboardEvent<HTMLFormElement>) => {
+    if (event.key !== "Enter") {
+      return;
+    }
+
+    const target = event.target as HTMLElement;
+
+    const isTextarea = target.tagName === "TEXTAREA";
+
+    if (step === 1 && !isTextarea) {
+      event.preventDefault();
+      handleNext();
+      return;
+    }
+
+    if (step === 2 && !isTextarea) {
+      event.preventDefault();
+      handleNext();
+      return;
+    }
+
+    if (step === 3 && isTextarea && (event.ctrlKey || event.metaKey)) {
+      event.preventDefault();
+
+      const form = event.currentTarget;
+
+      form.requestSubmit();
     }
   };
 
@@ -314,7 +346,12 @@ const Contact = () => {
             </div>
           </div>
 
-          <form className="contact__form" onSubmit={handleSubmit} noValidate>
+          <form
+            className="contact__form"
+            onSubmit={handleSubmit}
+            onKeyDown={handleFormKeyDown}
+            noValidate
+          >
             {step === 1 && (
               <div className="contact__step">
                 <div className="contact__step-header">
@@ -516,7 +553,6 @@ const Contact = () => {
                     siteKey={TURNSTILE_SITE_KEY}
                     onSuccess={(token) => {
                       setTurnstileToken(token);
-
                       setError("");
                     }}
                     onExpire={() => {
@@ -525,10 +561,13 @@ const Contact = () => {
                     onError={() => {
                       setTurnstileToken("");
 
-                      setError("Security check failed. Please try again.");
+                      setError(
+                        "Security verification failed. Please try again.",
+                      );
                     }}
                     options={{
                       theme: "dark",
+                      appearance: "interaction-only",
                     }}
                   />
                 </div>

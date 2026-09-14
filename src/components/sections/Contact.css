@@ -20,7 +20,8 @@
 .contact__eyebrow {
     opacity: 0;
 
-    transform: translateY(14px);
+    transform:
+        translateY(14px);
 
     transition:
         opacity 0.7s ease,
@@ -30,7 +31,8 @@
 .contact__title {
     opacity: 0;
 
-    transform: translateY(18px);
+    transform:
+        translateY(18px);
 
     transition:
         opacity 0.8s ease 0.08s,
@@ -40,7 +42,8 @@
 .contact__intro {
     opacity: 0;
 
-    transform: translateY(16px);
+    transform:
+        translateY(16px);
 
     transition:
         opacity 0.75s ease 0.16s,
@@ -50,7 +53,8 @@
 .contact__workspace {
     opacity: 0;
 
-    transform: translateY(22px);
+    transform:
+        translateY(22px);
 
     transition:
         opacity 0.85s ease 0.22s,
@@ -63,7 +67,8 @@
 .contact--visible .contact__workspace {
     opacity: 1;
 
-    transform: translateY(0);
+    transform:
+        translateY(0);
 }
 
 /* HEADER */
@@ -523,13 +528,9 @@
 /* TURNSTILE */
 
 .contact__turnstile {
-    display: flex;
+    width: 100%;
 
-    justify-content: flex-end;
-
-    margin-top: 32px;
-
-    overflow: hidden;
+    margin-top: 18px;
 }
 
 /* ERROR */
@@ -927,13 +928,6 @@
         border-bottom: 0;
     }
 
-    .contact__turnstile {
-        justify-content:
-            flex-start;
-
-        margin-top: 26px;
-    }
-
     .contact__actions {
         margin-top: 36px;
     }
@@ -1031,12 +1025,6 @@
         width: 100%;
 
         min-height: 50px;
-    }
-
-    .contact__turnstile {
-        width: 100%;
-
-        overflow-x: auto;
     }
 }
 
