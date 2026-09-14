@@ -1,67 +1,89 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
+
 import type { CSSProperties } from "react";
+
+import { ArrowUpRight } from "lucide-react";
+
+import useSectionReveal from "../../hooks/useSectionReveal";
 
 import "./Services.css";
 
-const services = [
+type Service = {
+  number: string;
+  title: string;
+  shortDescription: string;
+  description: string;
+  deliverables: string[];
+};
+
+const services: Service[] = [
   {
     number: "01",
     title: "Business Websites",
+    shortDescription:
+      "Modern websites built around your business, goals and audience.",
     description:
-      "Modern, responsive websites for businesses, brands and professionals, focused on clarity, usability and strong presentation.",
+      "I build responsive business websites that present your brand clearly, perform well and create a professional experience across desktop and mobile devices.",
+    deliverables: [
+      "Responsive interface",
+      "Modern visual structure",
+      "Performance-focused development",
+      "Contact and enquiry functionality",
+    ],
   },
   {
     number: "02",
     title: "Landing Pages",
+    shortDescription:
+      "Focused pages designed around a clear message and conversion goal.",
     description:
-      "Focused landing pages built to communicate an offer clearly and guide users toward a specific action.",
+      "Landing pages are built around one primary objective, combining strong hierarchy, focused content and a smooth user experience that helps visitors understand the offer quickly.",
+    deliverables: [
+      "Clear conversion structure",
+      "Responsive layout",
+      "Fast loading experience",
+      "Call-to-action sections",
+    ],
   },
   {
     number: "03",
     title: "Custom Web Apps",
+    shortDescription:
+      "Interactive web applications built around real product requirements.",
     description:
-      "Custom web applications and interactive functionality developed around the unique needs of each project.",
+      "For projects that need more than a traditional website, I develop custom web applications with reusable components, structured logic and scalable frontend architecture.",
+    deliverables: [
+      "Custom application interface",
+      "Reusable component system",
+      "API integration",
+      "Scalable frontend architecture",
+    ],
   },
   {
     number: "04",
     title: "AI Integrations",
+    shortDescription:
+      "AI-powered functionality integrated directly into digital products.",
     description:
-      "AI-powered features and smart tools integrated into modern web products to automate tasks and improve user experience.",
+      "I integrate AI functionality into websites and web applications to create useful product features such as assistants, content generation, structured recommendations and intelligent workflows.",
+    deliverables: [
+      "AI-powered features",
+      "API integration",
+      "Custom user flows",
+      "Production-ready implementation",
+    ],
   },
 ];
 
 const Services = () => {
-  const sectionRef = useRef<HTMLElement>(null);
+  const { elementRef: sectionRef, isVisible } = useSectionReveal<HTMLElement>();
 
-  const [isVisible, setIsVisible] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
+
+  const activeService = services[activeIndex];
 
   const progress =
     services.length > 1 ? (activeIndex / (services.length - 1)) * 100 : 0;
-
-  useEffect(() => {
-    const section = sectionRef.current;
-
-    if (!section) {
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsVisible(entry.isIntersecting);
-      },
-      {
-        threshold: 0.15,
-        rootMargin: "0px 0px -8% 0px",
-      },
-    );
-
-    observer.observe(section);
-
-    return () => {
-      observer.disconnect();
-    };
-  }, []);
 
   return (
     <section
@@ -74,57 +96,73 @@ const Services = () => {
           <p className="services__eyebrow">Services</p>
 
           <h2 className="services__title">
-            From an idea to a<span> complete digital product.</span>
+            From first idea to
+            <span> complete digital product.</span>
           </h2>
         </div>
 
-        <div className="services__timeline">
-          <div className="services__line" aria-hidden="true">
-            <div
-              className="services__line-progress"
-              style={
-                {
-                  "--progress": `${progress}%`,
-                } as CSSProperties
-              }
-            />
-          </div>
+        <div className="services__line">
+          <div
+            className="services__line-progress"
+            style={
+              {
+                "--services-progress": `${progress}%`,
+              } as CSSProperties
+            }
+            aria-hidden="true"
+          />
+        </div>
 
+        <div className="services__content">
           <div className="services__items">
             {services.map((service, index) => (
               <button
                 key={service.number}
                 type="button"
-                className={`service-item ${
-                  activeIndex === index ? "service-item--active" : ""
+                className={`services__item ${
+                  activeIndex === index ? "services__item--active" : ""
                 }`}
+                aria-pressed={activeIndex === index}
                 onMouseEnter={() => setActiveIndex(index)}
                 onFocus={() => setActiveIndex(index)}
                 onClick={() => setActiveIndex(index)}
-                aria-pressed={activeIndex === index}
               >
-                <div className="service-item__dot" aria-hidden="true">
-                  <span />
+                <span className="services__item-number">{service.number}</span>
+
+                <div className="services__item-content">
+                  <h3>{service.title}</h3>
+
+                  <p>{service.shortDescription}</p>
                 </div>
 
-                <span className="service-item__number">{service.number}</span>
-
-                <h3>{service.title}</h3>
+                <ArrowUpRight
+                  className="services__item-icon"
+                  size={18}
+                  aria-hidden="true"
+                />
               </button>
             ))}
           </div>
 
           <div className="services__details" aria-live="polite">
-            <div className="services__details-number" aria-hidden="true">
-              {services[activeIndex].number}
-            </div>
+            <span className="services__details-number">
+              {activeService.number}
+            </span>
 
-            <div className="services__details-content">
-              <span className="services__details-label">Selected service</span>
+            <h3>{activeService.title}</h3>
 
-              <h3>{services[activeIndex].title}</h3>
+            <p className="services__details-description">
+              {activeService.description}
+            </p>
 
-              <p>{services[activeIndex].description}</p>
+            <div className="services__details-list">
+              {activeService.deliverables.map((deliverable) => (
+                <div key={deliverable} className="services__details-item">
+                  <span aria-hidden="true" />
+
+                  <p>{deliverable}</p>
+                </div>
+              ))}
             </div>
           </div>
         </div>
