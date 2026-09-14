@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { SyntheticEvent } from "react";
 
 import { ArrowUpRight, Check, Sparkles, WandSparkles } from "lucide-react";
@@ -36,12 +36,38 @@ const projectTypes = [
 ];
 
 const AIProjectPlanner = () => {
+  const sectionRef = useRef<HTMLElement>(null);
+
+  const [isVisible, setIsVisible] = useState(false);
   const [description, setDescription] = useState("");
   const [projectType, setProjectType] = useState("Not sure yet");
-
   const [isGenerating, setIsGenerating] = useState(false);
   const [plan, setPlan] = useState<ProjectPlan | null>(null);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    const section = sectionRef.current;
+
+    if (!section) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsVisible(entry.isIntersecting);
+      },
+      {
+        threshold: 0.15,
+        rootMargin: "0px 0px -8% 0px",
+      },
+    );
+
+    observer.observe(section);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
 
   const handleSubmit = async (event: SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -112,7 +138,11 @@ const AIProjectPlanner = () => {
   };
 
   return (
-    <section id="ai-project-planner" className="ai-planner">
+    <section
+      ref={sectionRef}
+      id="ai-project-planner"
+      className={`ai-planner ${isVisible ? "ai-planner--visible" : ""}`}
+    >
       <div className="ai-planner__container">
         <div className="ai-planner__header">
           <div>
@@ -135,7 +165,8 @@ const AIProjectPlanner = () => {
           <div className="ai-planner__input-panel">
             <div className="ai-planner__panel-top">
               <div>
-                <WandSparkles size={17} />
+                <WandSparkles size={17} aria-hidden="true" />
+
                 <span>Describe your project</span>
               </div>
 
@@ -154,10 +185,14 @@ const AIProjectPlanner = () => {
                     setError("");
                   }}
                   maxLength={1000}
+                  aria-describedby="project-description-count"
                   placeholder="For example: I need a modern website for a boutique hotel where visitors can explore rooms, view a gallery and send booking enquiries..."
                 />
 
-                <span className="ai-planner__count">
+                <span
+                  id="project-description-count"
+                  className="ai-planner__count"
+                >
                   {description.length} / 1000
                 </span>
               </div>
@@ -175,6 +210,7 @@ const AIProjectPlanner = () => {
                           ? "ai-planner__type-option ai-planner__type-option--active"
                           : "ai-planner__type-option"
                       }
+                      aria-pressed={projectType === type}
                       onClick={() => {
                         setProjectType(type);
                         setError("");
@@ -182,13 +218,19 @@ const AIProjectPlanner = () => {
                     >
                       {type}
 
-                      {projectType === type && <Check size={13} />}
+                      {projectType === type && (
+                        <Check size={13} aria-hidden="true" />
+                      )}
                     </button>
                   ))}
                 </div>
               </div>
 
-              {error && <p className="ai-planner__error">{error}</p>}
+              {error && (
+                <p className="ai-planner__error" role="alert">
+                  {error}
+                </p>
+              )}
 
               <button
                 type="submit"
@@ -197,12 +239,12 @@ const AIProjectPlanner = () => {
               >
                 {isGenerating ? (
                   <>
-                    <span className="ai-planner__loader" />
+                    <span className="ai-planner__loader" aria-hidden="true" />
                     Analysing your idea...
                   </>
                 ) : (
                   <>
-                    <Sparkles size={16} />
+                    <Sparkles size={16} aria-hidden="true" />
                     Generate project plan
                   </>
                 )}
@@ -210,10 +252,14 @@ const AIProjectPlanner = () => {
             </form>
           </div>
 
-          <div className="ai-planner__result-panel">
+          <div
+            className="ai-planner__result-panel"
+            aria-live="polite"
+            aria-busy={isGenerating}
+          >
             {!plan && !isGenerating && (
               <div className="ai-planner__empty">
-                <div className="ai-planner__empty-icon">
+                <div className="ai-planner__empty-icon" aria-hidden="true">
                   <Sparkles size={22} />
                 </div>
 
@@ -228,7 +274,7 @@ const AIProjectPlanner = () => {
 
             {isGenerating && (
               <div className="ai-planner__loading">
-                <div className="ai-planner__loading-icon">
+                <div className="ai-planner__loading-icon" aria-hidden="true">
                   <Sparkles size={22} />
                 </div>
 
@@ -236,7 +282,7 @@ const AIProjectPlanner = () => {
 
                 <p>Evaluating scope, complexity and recommended features.</p>
 
-                <div className="ai-planner__loading-lines">
+                <div className="ai-planner__loading-lines" aria-hidden="true">
                   <span />
                   <span />
                   <span />
@@ -248,7 +294,8 @@ const AIProjectPlanner = () => {
               <div className="ai-planner__result">
                 <div className="ai-planner__result-top">
                   <div>
-                    <Sparkles size={16} />
+                    <Sparkles size={16} aria-hidden="true" />
+
                     <span>Project analysis</span>
                   </div>
 
@@ -257,17 +304,20 @@ const AIProjectPlanner = () => {
 
                 <div className="ai-planner__result-title">
                   <span>Recommended project</span>
+
                   <h3>{plan.type}</h3>
                 </div>
 
                 <div className="ai-planner__result-meta">
                   <div>
                     <span>Complexity</span>
+
                     <strong>{plan.complexity}</strong>
                   </div>
 
                   <div>
                     <span>Estimated timeline</span>
+
                     <strong>{plan.timeline}</strong>
                   </div>
                 </div>
@@ -278,7 +328,7 @@ const AIProjectPlanner = () => {
                   <div>
                     {plan.features.map((feature) => (
                       <p key={feature}>
-                        <Check size={14} />
+                        <Check size={14} aria-hidden="true" />
                         {feature}
                       </p>
                     ))}
@@ -291,7 +341,7 @@ const AIProjectPlanner = () => {
                   onClick={handleContinueWithProject}
                 >
                   Continue with this project
-                  <ArrowUpRight size={16} />
+                  <ArrowUpRight size={16} aria-hidden="true" />
                 </button>
               </div>
             )}

@@ -15,6 +15,56 @@
     padding: 0 32px;
 }
 
+/* SCROLL REVEAL */
+
+.ai-planner__eyebrow {
+    opacity: 0;
+
+    transform: translateY(14px);
+
+    transition:
+        opacity 0.7s ease,
+        transform 0.7s ease;
+}
+
+.ai-planner__title {
+    opacity: 0;
+
+    transform: translateY(18px);
+
+    transition:
+        opacity 0.8s ease 0.08s,
+        transform 0.8s ease 0.08s;
+}
+
+.ai-planner__intro {
+    opacity: 0;
+
+    transform: translateY(16px);
+
+    transition:
+        opacity 0.75s ease 0.16s,
+        transform 0.75s ease 0.16s;
+}
+
+.ai-planner__workspace {
+    opacity: 0;
+
+    transform: translateY(22px);
+
+    transition:
+        opacity 0.85s ease 0.22s,
+        transform 0.85s ease 0.22s;
+}
+
+.ai-planner--visible .ai-planner__eyebrow,
+.ai-planner--visible .ai-planner__title,
+.ai-planner--visible .ai-planner__intro,
+.ai-planner--visible .ai-planner__workspace {
+    opacity: 1;
+
+    transform: translateY(0);
+}
 
 /* HEADER */
 
@@ -38,6 +88,7 @@
     font-weight: 500;
 
     letter-spacing: 0.25em;
+
     text-transform: uppercase;
 
     color: #6f6f6f;
@@ -72,11 +123,11 @@
     padding-bottom: 4px;
 
     font-size: 14px;
+
     line-height: 1.75;
 
     color: #777777;
 }
-
 
 /* WORKSPACE */
 
@@ -97,7 +148,6 @@
 
     background: #101010;
 }
-
 
 /* LEFT */
 
@@ -143,11 +193,11 @@
     font-size: 10px;
 
     letter-spacing: 0.14em;
+
     text-transform: uppercase;
 
     color: #555555;
 }
-
 
 /* FIELD */
 
@@ -192,6 +242,7 @@
     font-family: inherit;
 
     font-size: 14px;
+
     line-height: 1.75;
 
     transition:
@@ -219,7 +270,6 @@
 
     color: #4d4d4d;
 }
-
 
 /* TYPE */
 
@@ -294,18 +344,17 @@
     color: #000000;
 }
 
-
 /* ERROR */
 
 .ai-planner__error {
     margin: 24px 0 0;
 
     font-size: 12px;
+
     line-height: 1.6;
 
     color: #b6b6b6;
 }
-
 
 /* GENERATE */
 
@@ -358,7 +407,6 @@
     cursor: not-allowed;
 }
 
-
 /* LOADER */
 
 .ai-planner__loader {
@@ -377,7 +425,6 @@
         aiPlannerSpinner 0.75s linear infinite;
 }
 
-
 /* RIGHT */
 
 .ai-planner__result-panel {
@@ -395,7 +442,6 @@
             transparent 48%),
         #0d0d0d;
 }
-
 
 /* EMPTY */
 
@@ -450,11 +496,11 @@
     margin: 12px 0 0;
 
     font-size: 12px;
+
     line-height: 1.7;
 
     color: #5e5e5e;
 }
-
 
 /* LOADING */
 
@@ -508,7 +554,6 @@
     margin-left: auto;
     margin-right: auto;
 }
-
 
 /* RESULT */
 
@@ -582,7 +627,6 @@
         0 0 0 4px rgba(34, 197, 94, 0.08);
 }
 
-
 /* RESULT TITLE */
 
 .ai-planner__result-title>span {
@@ -593,6 +637,7 @@
     font-size: 10px;
 
     letter-spacing: 0.15em;
+
     text-transform: uppercase;
 
     color: #555555;
@@ -616,7 +661,6 @@
 
     color: #ffffff;
 }
-
 
 /* META */
 
@@ -668,7 +712,6 @@
     color: #d0d0d0;
 }
 
-
 /* FEATURES */
 
 .ai-planner__features {
@@ -683,6 +726,7 @@
     font-size: 10px;
 
     letter-spacing: 0.14em;
+
     text-transform: uppercase;
 
     color: #555555;
@@ -706,6 +750,7 @@
     margin: 0;
 
     font-size: 12px;
+
     line-height: 1.6;
 
     color: #9a9a9a;
@@ -718,7 +763,6 @@
 
     color: #d4d4d4;
 }
-
 
 /* CONTINUE */
 
@@ -770,7 +814,6 @@
     transform:
         translateY(-2px);
 }
-
 
 /* ANIMATIONS */
 
@@ -827,7 +870,6 @@
     }
 }
 
-
 /* TABLET */
 
 @media (max-width: 1000px) {
@@ -870,7 +912,6 @@
         min-height: 500px;
     }
 }
-
 
 /* MOBILE */
 
@@ -919,6 +960,7 @@
         max-width: 100%;
 
         font-size: 14px;
+
         line-height: 1.65;
     }
 
@@ -943,6 +985,7 @@
         border-radius: 15px;
 
         font-size: 13px;
+
         line-height: 1.65;
     }
 
@@ -1012,7 +1055,6 @@
         margin-top: 32px;
     }
 }
-
 
 /* SMALL MOBILE */
 
@@ -1112,7 +1154,6 @@
     }
 }
 
-
 /* VERY SMALL MOBILE */
 
 @media (max-width: 360px) {
@@ -1137,10 +1178,20 @@
     }
 }
 
-
 /* REDUCED MOTION */
 
 @media (prefers-reduced-motion: reduce) {
+
+    .ai-planner__eyebrow,
+    .ai-planner__title,
+    .ai-planner__intro,
+    .ai-planner__workspace {
+        opacity: 1;
+
+        transform: none;
+
+        transition: none;
+    }
 
     .ai-planner__loader,
     .ai-planner__loading-icon,
