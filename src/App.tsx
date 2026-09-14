@@ -3,7 +3,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import Home from "./pages/Home";
 import NotFound from "./pages/NotFound";
 
-function App() {
+const App = () => {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
@@ -13,6 +13,6 @@ function App() {
       <Route path="*" element={<Navigate to="/404" replace />} />
     </Routes>
   );
-}
+};
 
 export default App;
