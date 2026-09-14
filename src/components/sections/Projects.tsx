@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+
 import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
 
 import { projects } from "../../data/projects";
@@ -48,6 +48,7 @@ const Projects = () => {
     const maxScrollLeft = carousel.scrollWidth - carousel.clientWidth;
 
     setCanScrollLeft(carousel.scrollLeft > 4);
+
     setCanScrollRight(carousel.scrollLeft < maxScrollLeft - 4);
   }, []);
 
@@ -68,6 +69,7 @@ const Projects = () => {
 
     return () => {
       carousel.removeEventListener("scroll", updateScrollControls);
+
       window.removeEventListener("resize", updateScrollControls);
     };
   }, [updateScrollControls]);
@@ -80,6 +82,7 @@ const Projects = () => {
     }
 
     const card = carousel.querySelector<HTMLElement>(".project-card");
+
     const cardWidth = card?.offsetWidth ?? 350;
 
     const styles = window.getComputedStyle(carousel);
@@ -111,6 +114,7 @@ const Projects = () => {
 
           <div
             className="projects__controls"
+            role="group"
             aria-label="Project carousel controls"
           >
             <button
@@ -139,13 +143,15 @@ const Projects = () => {
           role="region"
           aria-label="Selected projects"
         >
-          {projects.map((project) => (
-            <article key={project.slug} className="project-card">
-              <Link
-                to={`/projects/${project.slug}`}
-                className="project-card__content"
-                aria-label={`View ${project.title} case study`}
-              >
+          {projects.map((project) => {
+            const projectUrl = project.liveUrl ?? project.githubUrl;
+
+            const ariaLabel = project.liveUrl
+              ? `Open ${project.title} live project`
+              : `Open ${project.title} GitHub repository`;
+
+            const cardContent = (
+              <>
                 <div className="project-card__preview">
                   {project.image ? (
                     <img
@@ -157,6 +163,7 @@ const Projects = () => {
                   ) : (
                     <div className="project-card__placeholder">
                       <span>{project.number}</span>
+
                       <p>{project.title}</p>
                     </div>
                   )}
@@ -188,9 +195,27 @@ const Projects = () => {
                     ))}
                   </div>
                 </div>
-              </Link>
-            </article>
-          ))}
+              </>
+            );
+
+            return (
+              <article key={project.number} className="project-card">
+                {projectUrl ? (
+                  <a
+                    href={projectUrl}
+                    className="project-card__content"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={ariaLabel}
+                  >
+                    {cardContent}
+                  </a>
+                ) : (
+                  <div className="project-card__content">{cardContent}</div>
+                )}
+              </article>
+            );
+          })}
         </div>
 
         <p className="projects__swipe">Swipe to explore projects</p>
