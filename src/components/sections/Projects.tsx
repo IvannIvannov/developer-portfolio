@@ -3,40 +3,18 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
 
 import { projects } from "../../data/projects";
+import useSectionReveal from "../../hooks/useSectionReveal";
 
 import "./Projects.css";
 
 const Projects = () => {
-  const sectionRef = useRef<HTMLElement>(null);
+  const { elementRef: sectionRef, isVisible } = useSectionReveal<HTMLElement>();
+
   const carouselRef = useRef<HTMLDivElement>(null);
 
-  const [isVisible, setIsVisible] = useState(false);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
+
   const [canScrollRight, setCanScrollRight] = useState(false);
-
-  useEffect(() => {
-    const section = sectionRef.current;
-
-    if (!section) {
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsVisible(entry.isIntersecting);
-      },
-      {
-        threshold: 0.15,
-        rootMargin: "0px 0px -8% 0px",
-      },
-    );
-
-    observer.observe(section);
-
-    return () => {
-      observer.disconnect();
-    };
-  }, []);
 
   const updateScrollControls = useCallback(() => {
     const carousel = carouselRef.current;
