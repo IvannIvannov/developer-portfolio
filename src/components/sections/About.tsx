@@ -1,3 +1,5 @@
+import { useEffect, useRef, useState } from "react";
+
 import "./About.css";
 
 const PROFILE_IMAGE_URL =
@@ -13,8 +15,39 @@ const technologies = [
 ];
 
 const About = () => {
+  const sectionRef = useRef<HTMLElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const section = sectionRef.current;
+
+    if (!section) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsVisible(entry.isIntersecting);
+      },
+      {
+        threshold: 0.15,
+        rootMargin: "0px 0px -8% 0px",
+      },
+    );
+
+    observer.observe(section);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
   return (
-    <section id="about" className="about">
+    <section
+      ref={sectionRef}
+      id="about"
+      className={`about ${isVisible ? "about--visible" : ""}`}
+    >
       <div className="about__container">
         <div className="about__grid">
           <div className="about__visual">
