@@ -15,6 +15,56 @@
     padding: 0 32px;
 }
 
+/* SCROLL REVEAL */
+
+.contact__eyebrow {
+    opacity: 0;
+
+    transform: translateY(14px);
+
+    transition:
+        opacity 0.7s ease,
+        transform 0.7s ease;
+}
+
+.contact__title {
+    opacity: 0;
+
+    transform: translateY(18px);
+
+    transition:
+        opacity 0.8s ease 0.08s,
+        transform 0.8s ease 0.08s;
+}
+
+.contact__intro {
+    opacity: 0;
+
+    transform: translateY(16px);
+
+    transition:
+        opacity 0.75s ease 0.16s,
+        transform 0.75s ease 0.16s;
+}
+
+.contact__workspace {
+    opacity: 0;
+
+    transform: translateY(22px);
+
+    transition:
+        opacity 0.85s ease 0.22s,
+        transform 0.85s ease 0.22s;
+}
+
+.contact--visible .contact__eyebrow,
+.contact--visible .contact__title,
+.contact--visible .contact__intro,
+.contact--visible .contact__workspace {
+    opacity: 1;
+
+    transform: translateY(0);
+}
 
 /* HEADER */
 
@@ -38,6 +88,7 @@
     font-weight: 500;
 
     letter-spacing: 0.25em;
+
     text-transform: uppercase;
 
     color: #6f6f6f;
@@ -75,6 +126,7 @@
         0 0 22px;
 
     font-size: 14px;
+
     line-height: 1.75;
 
     color: #777777;
@@ -99,7 +151,6 @@
     color: #ffffff;
 }
 
-
 /* WORKSPACE */
 
 .contact__workspace {
@@ -123,7 +174,6 @@
         #101010;
 }
 
-
 /* PROGRESS */
 
 .contact__progress {
@@ -144,6 +194,7 @@
     font-size: 10px;
 
     letter-spacing: 0.14em;
+
     text-transform: uppercase;
 
     color: #555555;
@@ -167,7 +218,6 @@
     transition:
         width 0.4s ease;
 }
-
 
 /* FORM */
 
@@ -226,7 +276,6 @@
 
     color: #ffffff;
 }
-
 
 /* FIELDS */
 
@@ -292,6 +341,7 @@
     resize: vertical;
 
     font-size: 14px;
+
     line-height: 1.75;
 }
 
@@ -316,7 +366,6 @@
 
     color: #484848;
 }
-
 
 /* STEP 2 */
 
@@ -414,7 +463,6 @@
     color: #000000;
 }
 
-
 /* SUMMARY */
 
 .contact__summary {
@@ -472,7 +520,6 @@
     white-space: nowrap;
 }
 
-
 /* TURNSTILE */
 
 .contact__turnstile {
@@ -485,7 +532,6 @@
     overflow: hidden;
 }
 
-
 /* ERROR */
 
 .contact__error {
@@ -493,11 +539,11 @@
         22px 0 0;
 
     font-size: 12px;
+
     line-height: 1.5;
 
     color: #b7b7b7;
 }
-
 
 /* ACTIONS */
 
@@ -591,7 +637,6 @@
     cursor: not-allowed;
 }
 
-
 /* SUCCESS */
 
 .contact__success {
@@ -644,11 +689,11 @@
     margin: 0;
 
     font-size: 11px;
+
     line-height: 1.5;
 
     color: #a3a3a3;
 }
-
 
 /* ANIMATIONS */
 
@@ -684,7 +729,6 @@
     }
 }
 
-
 /* TABLET */
 
 @media (max-width: 950px) {
@@ -714,7 +758,6 @@
         padding-left: 60px;
     }
 }
-
 
 /* MOBILE */
 
@@ -769,6 +812,7 @@
         margin-bottom: 16px;
 
         font-size: 14px;
+
         line-height: 1.65;
     }
 
@@ -835,6 +879,7 @@
         min-height: 155px;
 
         font-size: 13px;
+
         line-height: 1.65;
     }
 
@@ -901,7 +946,6 @@
         margin-top: 26px;
     }
 }
-
 
 /* SMALL MOBILE */
 
@@ -978,7 +1022,8 @@
     }
 
     .contact__actions--end {
-        flex-direction: column;
+        flex-direction:
+            column;
     }
 
     .contact__next,
@@ -994,7 +1039,6 @@
         overflow-x: auto;
     }
 }
-
 
 /* VERY SMALL MOBILE */
 
@@ -1023,13 +1067,32 @@
     }
 }
 
-
 /* REDUCED MOTION */
 
 @media (prefers-reduced-motion: reduce) {
 
+    .contact__eyebrow,
+    .contact__title,
+    .contact__intro,
+    .contact__workspace {
+        opacity: 1;
+
+        transform: none;
+
+        transition: none;
+    }
+
     .contact__step,
     .contact__success {
         animation: none;
+    }
+
+    .contact__progress-value,
+    .contact__option,
+    .contact__next,
+    .contact__back,
+    .contact__field input,
+    .contact__field textarea {
+        transition: none;
     }
 }

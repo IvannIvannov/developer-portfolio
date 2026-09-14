@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { SyntheticEvent } from "react";
 
 import { Turnstile } from "@marsidev/react-turnstile";
@@ -63,6 +63,10 @@ const budgets = [
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const Contact = () => {
+  const sectionRef = useRef<HTMLElement>(null);
+
+  const [isVisible, setIsVisible] = useState(false);
+
   const [step, setStep] = useState(1);
 
   const [formData, setFormData] = useState<ContactFormData>(initialFormData);
@@ -74,6 +78,30 @@ const Contact = () => {
   const [isSuccess, setIsSuccess] = useState(false);
 
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    const section = sectionRef.current;
+
+    if (!section) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsVisible(entry.isIntersecting);
+      },
+      {
+        threshold: 0.15,
+        rootMargin: "0px 0px -8% 0px",
+      },
+    );
+
+    observer.observe(section);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
 
   useEffect(() => {
     const handleAIProjectSelection = (event: Event) => {
@@ -141,15 +169,18 @@ const Contact = () => {
   const handleNext = () => {
     if (step === 1) {
       const cleanName = formData.name.trim();
+
       const cleanEmail = formData.email.trim();
 
       if (!cleanName || !cleanEmail) {
         setError("Please enter your name and email address.");
+
         return;
       }
 
       if (!EMAIL_PATTERN.test(cleanEmail)) {
         setError("Please enter a valid email address.");
+
         return;
       }
 
@@ -182,11 +213,13 @@ const Contact = () => {
 
     if (!cleanMessage) {
       setError("Please tell me a little about your project.");
+
       return;
     }
 
     if (!turnstileToken) {
       setError("Please complete the security check.");
+
       return;
     }
 
@@ -197,11 +230,9 @@ const Contact = () => {
     try {
       const response = await fetch(`${API_URL}/api/contact`, {
         method: "POST",
-
         headers: {
           "Content-Type": "application/json",
         },
-
         body: JSON.stringify({
           ...formData,
           name: formData.name.trim(),
@@ -235,7 +266,11 @@ const Contact = () => {
   };
 
   return (
-    <section id="contact" className="contact">
+    <section
+      ref={sectionRef}
+      id="contact"
+      className={`contact ${isVisible ? "contact--visible" : ""}`}
+    >
       <div className="contact__container">
         <div className="contact__header">
           <div>
@@ -254,9 +289,9 @@ const Contact = () => {
             </p>
 
             <a href="mailto:ivann.ivannov26@icloud.com">
-              <Mail size={15} />
+              <Mail size={15} aria-hidden="true" />
               ivann.ivannov26@icloud.com
-              <ArrowUpRight size={14} />
+              <ArrowUpRight size={14} aria-hidden="true" />
             </a>
           </div>
         </div>
@@ -322,7 +357,11 @@ const Contact = () => {
                   </label>
                 </div>
 
-                {error && <p className="contact__error">{error}</p>}
+                {error && (
+                  <p className="contact__error" role="alert">
+                    {error}
+                  </p>
+                )}
 
                 <div className="contact__actions contact__actions--end">
                   <button
@@ -332,7 +371,7 @@ const Contact = () => {
                     disabled={!formData.name.trim() || !formData.email.trim()}
                   >
                     Continue
-                    <ArrowRight size={16} />
+                    <ArrowRight size={16} aria-hidden="true" />
                   </button>
                 </div>
               </div>
@@ -362,6 +401,7 @@ const Contact = () => {
                               ? "contact__option contact__option--active"
                               : "contact__option"
                           }
+                          aria-pressed={formData.projectType === projectType}
                           onClick={() =>
                             updateField("projectType", projectType)
                           }
@@ -369,7 +409,7 @@ const Contact = () => {
                           {projectType}
 
                           {formData.projectType === projectType && (
-                            <Check size={14} />
+                            <Check size={14} aria-hidden="true" />
                           )}
                         </button>
                       ))}
@@ -391,11 +431,14 @@ const Contact = () => {
                               ? "contact__option contact__option--active"
                               : "contact__option"
                           }
+                          aria-pressed={formData.budget === budget}
                           onClick={() => updateField("budget", budget)}
                         >
                           {budget}
 
-                          {formData.budget === budget && <Check size={14} />}
+                          {formData.budget === budget && (
+                            <Check size={14} aria-hidden="true" />
+                          )}
                         </button>
                       ))}
                     </div>
@@ -408,7 +451,7 @@ const Contact = () => {
                     className="contact__back"
                     onClick={handlePrevious}
                   >
-                    <ArrowLeft size={16} />
+                    <ArrowLeft size={16} aria-hidden="true" />
                     Back
                   </button>
 
@@ -418,7 +461,7 @@ const Contact = () => {
                     onClick={handleNext}
                   >
                     Continue
-                    <ArrowRight size={16} />
+                    <ArrowRight size={16} aria-hidden="true" />
                   </button>
                 </div>
               </div>
@@ -451,16 +494,19 @@ const Contact = () => {
                 <div className="contact__summary">
                   <div>
                     <span>Name</span>
+
                     <strong>{formData.name}</strong>
                   </div>
 
                   <div>
                     <span>Project</span>
+
                     <strong>{formData.projectType}</strong>
                   </div>
 
                   <div>
                     <span>Budget</span>
+
                     <strong>{formData.budget}</strong>
                   </div>
                 </div>
@@ -470,6 +516,7 @@ const Contact = () => {
                     siteKey={TURNSTILE_SITE_KEY}
                     onSuccess={(token) => {
                       setTurnstileToken(token);
+
                       setError("");
                     }}
                     onExpire={() => {
@@ -486,7 +533,11 @@ const Contact = () => {
                   />
                 </div>
 
-                {error && <p className="contact__error">{error}</p>}
+                {error && (
+                  <p className="contact__error" role="alert">
+                    {error}
+                  </p>
+                )}
 
                 <div className="contact__actions">
                   <button
@@ -495,7 +546,7 @@ const Contact = () => {
                     onClick={handlePrevious}
                     disabled={isSubmitting}
                   >
-                    <ArrowLeft size={16} />
+                    <ArrowLeft size={16} aria-hidden="true" />
                     Back
                   </button>
 
@@ -510,16 +561,18 @@ const Contact = () => {
                   >
                     {isSubmitting ? "Sending..." : "Send enquiry"}
 
-                    {!isSubmitting && <ArrowUpRight size={16} />}
+                    {!isSubmitting && (
+                      <ArrowUpRight size={16} aria-hidden="true" />
+                    )}
                   </button>
                 </div>
               </div>
             )}
 
             {isSuccess && (
-              <div className="contact__success">
+              <div className="contact__success" role="status">
                 <span>
-                  <Check size={15} />
+                  <Check size={15} aria-hidden="true" />
                 </span>
 
                 <p>Your project enquiry was sent successfully.</p>
