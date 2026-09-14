@@ -223,6 +223,14 @@ const Contact = () => {
         }),
       });
 
+      const contentType = response.headers.get("content-type");
+
+      if (!contentType?.includes("application/json")) {
+        throw new Error(
+          "The server returned an invalid response. Please try again.",
+        );
+      }
+
       const data = (await response.json()) as ContactResponse;
 
       if (!response.ok) {
