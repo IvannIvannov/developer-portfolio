@@ -74,6 +74,14 @@ const AIProjectPlanner = () => {
         }),
       });
 
+      const contentType = response.headers.get("content-type");
+
+      if (!contentType?.includes("application/json")) {
+        throw new Error(
+          "The server returned an invalid response. Please try again.",
+        );
+      }
+
       const data = (await response.json()) as ProjectPlanResponse;
 
       if (!response.ok || !data.success || !data.plan) {
