@@ -72,6 +72,9 @@ export const projects: Project[] = [
       "Vercel",
     ],
 
+    image:
+      "https://res.cloudinary.com/mxjelcos/image/upload/v1790251135/Screenshot_2026-09-24_145341.png",
+
     liveUrl: "https://restaurant-website-mu-mauve.vercel.app/bg",
   },
 ];
