@@ -42,7 +42,7 @@ export const projects: Project[] = [
     role: "Frontend Development",
 
     shortDescription:
-      "A modern personal portfolio focused on visual presentation, motion and a clean responsive experience.",
+      "A modern personal portfolio focused on visual presentation, motion and a clean responsive experience. Currently in development.",
 
     technologies: ["React", "TypeScript", "Motion", "Vite", "Vercel"],
 
@@ -50,5 +50,28 @@ export const projects: Project[] = [
       "https://res.cloudinary.com/dznyfk4z6/image/upload/f_auto,q_auto,w_1600/Bebe_qxmeb2.png",
 
     liveUrl: "https://anastasia-portfolio.vercel.app/",
+  },
+
+  {
+    number: "04",
+    title: "Restaurant Website",
+    category: "Restaurant Website",
+    year: "2026",
+    role: "Full-Stack Development",
+
+    shortDescription:
+      "A modern bilingual restaurant website with reservations, customer accounts, authentication and an admin dashboard, built around a premium responsive experience. Currently in development.",
+
+    technologies: [
+      "Next.js",
+      "TypeScript",
+      "Supabase",
+      "PostgreSQL",
+      "Tailwind CSS",
+      "Motion",
+      "Vercel",
+    ],
+
+    liveUrl: "https://restaurant-website-mu-mauve.vercel.app/bg",
   },
 ];
