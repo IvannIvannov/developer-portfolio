@@ -9,4 +9,6 @@ export type Project = {
   image?: string;
   liveUrl?: string;
   githubUrl?: string;
+  downloadUrl?: string;
+  downloadLabel?: string;
 };

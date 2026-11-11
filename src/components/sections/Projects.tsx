@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, ArrowUpRight, Download } from "lucide-react";
 
 import { projects } from "../../data/projects";
 import useSectionReveal from "../../hooks/useSectionReveal";
@@ -16,7 +16,7 @@ const Projects = () => {
 
   const [canScrollRight, setCanScrollRight] = useState(false);
 
-  const updateScrollControls = useCallback(() => {
+  const updateScrollState = useCallback(() => {
     const carousel = carouselRef.current;
 
     if (!carousel) {
@@ -37,39 +37,43 @@ const Projects = () => {
       return;
     }
 
-    updateScrollControls();
+    updateScrollState();
 
-    carousel.addEventListener("scroll", updateScrollControls, {
+    carousel.addEventListener("scroll", updateScrollState, {
       passive: true,
     });
 
-    window.addEventListener("resize", updateScrollControls);
+    window.addEventListener("resize", updateScrollState);
 
     return () => {
-      carousel.removeEventListener("scroll", updateScrollControls);
+      carousel.removeEventListener("scroll", updateScrollState);
 
-      window.removeEventListener("resize", updateScrollControls);
+      window.removeEventListener("resize", updateScrollState);
     };
-  }, [updateScrollControls]);
+  }, [updateScrollState]);
 
-  const scrollCarousel = (direction: "left" | "right") => {
+  const scrollProjects = (direction: "left" | "right") => {
     const carousel = carouselRef.current;
 
     if (!carousel) {
       return;
     }
 
-    const card = carousel.querySelector<HTMLElement>(".project-card");
-
-    const cardWidth = card?.offsetWidth ?? 350;
+    const cardWidth =
+      carousel.querySelector<HTMLElement>(".project-card")?.offsetWidth ?? 350;
 
     const styles = window.getComputedStyle(carousel);
 
     const gap = Number.parseFloat(styles.columnGap || styles.gap || "24") || 24;
 
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+
     carousel.scrollBy({
       left: direction === "left" ? -(cardWidth + gap) : cardWidth + gap,
-      behavior: "smooth",
+
+      behavior: prefersReducedMotion ? "auto" : "smooth",
     });
   };
 
@@ -97,7 +101,7 @@ const Projects = () => {
           >
             <button
               type="button"
-              onClick={() => scrollCarousel("left")}
+              onClick={() => scrollProjects("left")}
               aria-label="Previous projects"
               disabled={!canScrollLeft}
             >
@@ -106,7 +110,7 @@ const Projects = () => {
 
             <button
               type="button"
-              onClick={() => scrollCarousel("right")}
+              onClick={() => scrollProjects("right")}
               aria-label="Next projects"
               disabled={!canScrollRight}
             >
@@ -122,13 +126,18 @@ const Projects = () => {
           aria-label="Selected projects"
         >
           {projects.map((project) => {
-            const projectUrl = project.liveUrl ?? project.githubUrl;
+            const projectUrl =
+              project.downloadUrl ?? project.liveUrl ?? project.githubUrl;
 
-            const ariaLabel = project.liveUrl
-              ? `Open ${project.title} live project`
-              : `Open ${project.title} GitHub repository`;
+            const isDownload = Boolean(project.downloadUrl);
 
-            const cardContent = (
+            const linkLabel = isDownload
+              ? `Download ${project.title} for Windows`
+              : project.liveUrl
+                ? `Open ${project.title} live project`
+                : `Open ${project.title} GitHub repository`;
+
+            const content = (
               <>
                 <div className="project-card__preview">
                   {project.image ? (
@@ -157,7 +166,11 @@ const Projects = () => {
                     <span>{project.number}</span>
 
                     <span className="project-card__arrow" aria-hidden="true">
-                      <ArrowUpRight size={18} />
+                      {isDownload ? (
+                        <Download size={18} />
+                      ) : (
+                        <ArrowUpRight size={18} />
+                      )}
                     </span>
                   </div>
 
@@ -168,6 +181,10 @@ const Projects = () => {
                   </p>
 
                   <div className="project-card__technologies">
+                    {isDownload && (
+                      <span>{project.downloadLabel ?? "Download"}</span>
+                    )}
+
                     {project.technologies.slice(0, 3).map((technology) => (
                       <span key={technology}>{technology}</span>
                     ))}
@@ -184,12 +201,12 @@ const Projects = () => {
                     className="project-card__content"
                     target="_blank"
                     rel="noopener noreferrer"
-                    aria-label={ariaLabel}
+                    aria-label={linkLabel}
                   >
-                    {cardContent}
+                    {content}
                   </a>
                 ) : (
-                  <div className="project-card__content">{cardContent}</div>
+                  <div className="project-card__content">{content}</div>
                 )}
               </article>
             );

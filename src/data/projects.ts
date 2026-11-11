@@ -3,6 +3,35 @@ import type { Project } from "../types/project";
 export const projects: Project[] = [
   {
     number: "01",
+    title: "FlowMind",
+    category: "Desktop Application",
+    year: "2026",
+    role: "Full-Stack Development",
+
+    shortDescription:
+      "A modern productivity desktop application that brings tasks, projects, planning and local AI assistance together in one focused workspace. Currently available as a Windows beta.",
+
+    technologies: [
+      "Tauri",
+      "React",
+      "TypeScript",
+      "Rust",
+      "Supabase",
+      "Ollama",
+      "Vite",
+    ],
+
+    image:
+      "https://res.cloudinary.com/dznyfk4z6/image/upload/f_auto,q_auto,w_1600/v1794414018/Screenshot_2026-11-11_181940_s3x98m.png",
+
+    downloadUrl:
+      "https://github.com/IvannIvannov/flowmind/releases/download/v1.0.0/flowmind_1.0.0_x64-setup.exe",
+
+    downloadLabel: "Download for Windows",
+  },
+
+  {
+    number: "02",
     title: "CodeScope Analyzer",
     category: "Developer Tool",
     year: "2026",
@@ -20,7 +49,7 @@ export const projects: Project[] = [
   },
 
   {
-    number: "02",
+    number: "03",
     title: "E-Learning Platform",
     category: "Web Platform",
     year: "2026",
@@ -35,7 +64,7 @@ export const projects: Project[] = [
   },
 
   {
-    number: "03",
+    number: "04",
     title: "Anastasia Portfolio",
     category: "Portfolio Website",
     year: "2026",
@@ -53,7 +82,7 @@ export const projects: Project[] = [
   },
 
   {
-    number: "04",
+    number: "05",
     title: "Restaurant Website",
     category: "Restaurant Website",
     year: "2026",
@@ -71,9 +100,6 @@ export const projects: Project[] = [
       "Motion",
       "Vercel",
     ],
-
-    image:
-      "https://res.cloudinary.com/mxjelcos/image/upload/v1790251135/Screenshot_2026-09-24_145341.png",
 
     liveUrl: "https://restaurant-website-mu-mauve.vercel.app/bg",
   },
